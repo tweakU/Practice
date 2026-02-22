@@ -11,7 +11,7 @@
 ```console
 root@vm-ubuntu24:~# apt-get install slapd -y
 
-root@vm-ubuntu24:~# dpkg-reconfigure slapd # (No, homesrv01.org, homesrv01, Yes, No)
+root@vm-ubuntu24:~# dpkg-reconfigure slapd ## (No, homesrv01.org, homesrv01, Yes, No)
 
 root@vm-ubuntu24:~# ls -l /var/lib/ldap/
 total 60

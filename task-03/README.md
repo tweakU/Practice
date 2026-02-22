@@ -103,9 +103,7 @@ result: 0 Success
 2) Setup LDAP Client:
 
 ```console
-root@vm-ldap-client:~# apt-get install libnss-ldap libpam-ldap nscd -y ## (ldap://IP-адрес LDAP сервера, dc=homesrv01,dc=ru, LDAP ver. 3, No, Yes, cn=proxyuser,dc=homesv01,dc=ru, pwd db admin)
-
-root@vm-ldap-client:~# getent passwd proxyuser
+root@vm-ldap-client:~# apt-get install libnss-ldap libpam-ldap nscd -y ## (ldap://IP-адрес LDAP сервера, dc=homesrv01,dc=ru, LDAP ver. 3, No, Yes, cn=proxyuser,dc=homesv01,dc=ru, %proxyuser pwd)
 
 root@vm-ldap-client:~# cat /etc/nsswitch.conf ## ldap
 # /etc/nsswitch.conf
@@ -128,6 +126,12 @@ ethers:         db files
 rpc:            db files
 
 netgroup:       nis ldap
+
+root@vm-ldap-client:~# nano /etc/nsswitch.conf
+
+
+
+root@vm-ldap-client:~# getent passwd proxyuser
 
 root@vm-ldap-client:~# pam-auth-update ## Create home directory on login
 

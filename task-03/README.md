@@ -142,5 +142,5 @@ root@vm-ldap-client:~# grep -r 'home' /etc/pam.d/
 
 <br/>
 
-[Вернуться к списку задачь](../README.md)
+[Вернуться к списку задач](../README.md)
 ****

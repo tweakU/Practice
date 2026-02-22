@@ -10,6 +10,7 @@
 
 ```console
 root@vm-ubuntu24:~# apt-get install slapd -y
+
 <img width="1920" height="1080" alt="VirtualBox_ RLS-SERVER  Ubuntu-24 04 4-Desktop-UEFI_22_02_2026_16_13_11" src="https://github.com/user-attachments/assets/ade8424f-3400-4a13-872d-ee5621656f34" />
 
 root@vm-ubuntu24:~# dpkg-reconfigure slapd (No, homesrv01.org, homesrv01, Yes, No)

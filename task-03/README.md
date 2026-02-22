@@ -6,35 +6,9 @@
 
 **Выполнение задания**:
 
-1) :
+1) Setup LDAP Server (slapd):
 
 ```console
-
-```
-
-
-**Задание выполнено**.
-
-<br/>
-
-[Вернуться к списку заданий](../README.md)
-****
-
-
-
-
-
-
-
-
-
-
-
-Настройка LDAP сервера
-
-```console
-# SETUP LDAP SERVER (slapd)
-
 root@vm-ubuntu24:~# apt-get install slapd -y
 
 root@vm-ubuntu24:~# dpkg-reconfigure slapd (No, homesrv01.org, homesrv01, Yes, No)
@@ -125,8 +99,12 @@ result: 0 Success
 # numResponses: 4
 # numEntries: 3
 
+```
 
-# CLIENT SIDE
+
+2) Setup LDAP Client:
+
+```console
 root@vm-ubuntu24-ldap-client:~# apt-get install libnss-ldap libpam-ldap nscd -y
 # здесь очень важные настройки (ldap://ip, domain name, ver. 3, ???)
 root@vm-ubuntu24-ldap-client:~# getent passwd test
@@ -157,8 +135,14 @@ netgroup:       nis ldap
 # нужно обновить pamd ## Create home directory on login
 root@vm-ubuntu24-ldap-client:~# pam-auth-update
 
-!! root@vm-ubuntu24-ldap-client:~# grep -r 'home' /etc/pam.d/
-!! /etc/pam.d/common-session:session       optional                        pam_mkhomedir.so
-
-
+root@vm-ubuntu24-ldap-client:~# grep -r 'home' /etc/pam.d/
+/etc/pam.d/common-session:session       optional                        pam_mkhomedir.so
 ```
+
+
+**Задание выполнено**.
+
+<br/>
+
+[Вернуться к списку заданий](../README.md)
+****

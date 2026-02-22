@@ -9,18 +9,18 @@
 1) Setup LDAP Server (slapd):
 
 ```console
-root@vm-ubuntu24:~# apt-get install slapd -y
+root@vm-ldap-srv:~# apt-get install slapd -y
 
-root@vm-ubuntu24:~# dpkg-reconfigure slapd ## (No, homesrv01.org, homesrv01, Yes, No)
+root@vm-ldap-srv:~# dpkg-reconfigure slapd ## (No, homesrv01.org, homesrv01, pwd, Yes, No)
 
-root@vm-ubuntu24:~# ls -l /var/lib/ldap/
+root@vm-ldap-srv:~# ls -l /var/lib/ldap/
 total 60
 -rw------- 1 openldap openldap 57344 Feb 22 09:52 data.mdb
 -rw------- 1 openldap openldap  8192 Feb 22 09:52 lock.mdb
 
-root@vm-ubuntu24:~# apt-get install apache2 phpldapadmin -y
+root@vm-ldap-srv:~# apt-get install apache2 phpldapadmin -y
 
-root@vm-ubuntu24:~# ls -l /etc/apache2/conf-enabled/
+root@vm-ldap-srv:~# ls -l /etc/apache2/conf-enabled/
 total 0
 lrwxrwxrwx 1 root root 30 Feb 22 09:53 charset.conf -> ../conf-available/charset.conf
 lrwxrwxrwx 1 root root 44 Feb 22 09:53 localized-error-pages.conf -> ../conf-available/localized-error-pages.conf
@@ -29,9 +29,9 @@ lrwxrwxrwx 1 root root 35 Feb 22 09:57 phpldapadmin.conf -> ../conf-available/ph
 lrwxrwxrwx 1 root root 31 Feb 22 09:53 security.conf -> ../conf-available/security.conf
 lrwxrwxrwx 1 root root 36 Feb 22 09:53 serve-cgi-bin.conf -> ../conf-available/serve-cgi-bin.conf
 
-root@vm-ubuntu24:~# nano /etc/apache2/conf-enabled/phpldapadmin.conf # allow all?
+root@vm-ldap-srv:~# nano /etc/apache2/conf-enabled/phpldapadmin.conf ## ?? Allow from all
 
-root@vm-ubuntu24:~# curl 127.0.0.1/phpldapadmin
+root@vm-ldap-srv:~# curl 127.0.0.1/phpldapadmin
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html><head>
 <title>301 Moved Permanently</title>
@@ -42,18 +42,18 @@ root@vm-ubuntu24:~# curl 127.0.0.1/phpldapadmin
 <address>Apache/2.4.58 (Ubuntu) Server at 127.0.0.1 Port 80</address>
 </body></html>
 
-root@vm-ubuntu24:~# curl -L 127.0.0.1/phpldapadmin
+root@vm-ldap-srv:~# curl -L 127.0.0.1/phpldapadmin
 
-root@vm-ubuntu24:~# ls -l /usr/share/phpldapadmin/config/
+root@vm-ldap-srv:~# ls -l /usr/share/phpldapadmin/config/
+root@vm-ldap-srv:~# ls -l /usr/share/phpldapadmin/config/config.php ## replace "cn=admin,dc=example,dc=com" to "cn=admin,dc=homesrv01,dc=ru" twice
 
-root@vm-ubuntu24:~# 	 # listening port ??
+## Web browser
+http://IP-адрес/phpldapadmin/
 
-# Web browser
-http://192.168.21.181/phpldapadmin/
+1 Create a child entry --> Generic: Posix Group --> Group "ldap_user" --> Create Object --> Commit --> gidNumber 5000 (+0) --> Update Object
+2 Create a child entry --> Generic: User Account --> Last name --> Common Name --> User ID --> Password --> GID Number --> Home directory (/home/%username%) --> Login shell --> Create Object --> Commit --> uidNumber 10000 (+0) --> Update Object
 
-ДОБАВИТЬ СКРИНЫ С ДЕЙСТВИЯМИ В БРАУЗЕРЕ
-
-root@vm-ubuntu24:~# ldapsearch -H ldap://192.168.21.178 -D cn=admin,dc=homesrv01,dc=ru -w admin -b dc=homesrv01,dc=ru
+root@vm-ldap-srv:~# ldapsearch -H ldap://192.168.1.172 -D cn=admin,dc=homesrv01,dc=ru -w admin -b dc=homesrv01,dc=ru
 # extended LDIF
 #
 # LDAPv3
@@ -77,15 +77,14 @@ objectClass: posixGroup
 objectClass: top
 gidNumber: 5000
 
-# test test, ldap_user, homesrv01.ru
-dn: cn=test test,cn=ldap_user,dc=homesrv01,dc=ru
-givenName: test
-sn: test
-cn: test test
-uid: test
-userPassword:: e01ENX1DWTlyelVZaDAzUEszazZESmllMDlnPT0=
+# proxyuser, homesrv01.ru
+dn: cn=proxyuser,dc=homesrv01,dc=ru
+sn: proxyuser
+cn:: IHByb3h5dXNlcg==
+uid: proxyuser
+userPassword:: e01ENX1JQ3k1WXF4WkIxdVdTd2NWTFNOTGNBPT0=
 gidNumber: 5000
-homeDirectory: /home/test
+homeDirectory: /home/proxyuser
 loginShell: /bin/bash
 objectClass: inetOrgPerson
 objectClass: posixAccount
@@ -98,19 +97,18 @@ result: 0 Success
 
 # numResponses: 4
 # numEntries: 3
-
 ```
 
 
 2) Setup LDAP Client:
 
 ```console
-root@vm-ubuntu24-ldap-client:~# apt-get install libnss-ldap libpam-ldap nscd -y
+root@vm-ldap-srv-ldap-client:~# apt-get install libnss-ldap libpam-ldap nscd -y
 # здесь очень важные настройки (ldap://ip, domain name, ver. 3, ???)
-root@vm-ubuntu24-ldap-client:~# getent passwd test
+root@vm-ldap-srv-ldap-client:~# getent passwd test
 
 # далее необходимо добавить ldap
-root@vm-ubuntu24-ldap-client:~# cat /etc/nsswitch.conf
+root@vm-ldap-srv-ldap-client:~# cat /etc/nsswitch.conf
 # /etc/nsswitch.conf
 #
 # Example configuration of GNU Name Service Switch functionality.
@@ -133,9 +131,9 @@ rpc:            db files
 netgroup:       nis ldap
 
 # нужно обновить pamd ## Create home directory on login
-root@vm-ubuntu24-ldap-client:~# pam-auth-update
+root@vm-ldap-srv-ldap-client:~# pam-auth-update
 
-root@vm-ubuntu24-ldap-client:~# grep -r 'home' /etc/pam.d/
+root@vm-ldap-srv-ldap-client:~# grep -r 'home' /etc/pam.d/
 /etc/pam.d/common-session:session       optional                        pam_mkhomedir.so
 ```
 

@@ -103,12 +103,11 @@ result: 0 Success
 2) Setup LDAP Client:
 
 ```console
-root@vm-ldap-srv-ldap-client:~# apt-get install libnss-ldap libpam-ldap nscd -y
-# здесь очень важные настройки (ldap://ip, domain name, ver. 3, ???)
-root@vm-ldap-srv-ldap-client:~# getent passwd test
+root@vm-ldap-client:~# apt-get install libnss-ldap libpam-ldap nscd -y ## (ldap://IP-адрес LDAP сервера, dc=homesrv01,dc=ru, LDAP ver. 3, No, Yes, cn=proxyuser,dc=homesv01,dc=ru, pwd db admin)
 
-# далее необходимо добавить ldap
-root@vm-ldap-srv-ldap-client:~# cat /etc/nsswitch.conf
+root@vm-ldap-client:~# getent passwd proxyuser
+
+root@vm-ldap-client:~# cat /etc/nsswitch.conf ## ldap
 # /etc/nsswitch.conf
 #
 # Example configuration of GNU Name Service Switch functionality.
@@ -130,10 +129,9 @@ rpc:            db files
 
 netgroup:       nis ldap
 
-# нужно обновить pamd ## Create home directory on login
-root@vm-ldap-srv-ldap-client:~# pam-auth-update
+root@vm-ldap-client:~# pam-auth-update ## Create home directory on login
 
-root@vm-ldap-srv-ldap-client:~# grep -r 'home' /etc/pam.d/
+root@vm-ldap-client:~# grep -r 'home' /etc/pam.d/
 /etc/pam.d/common-session:session       optional                        pam_mkhomedir.so
 ```
 

@@ -9,9 +9,9 @@
 1) Setup LDAP Server (slapd):
 
 ```console
-root@vm-ldap-srv:~# apt-get install slapd -y
+root@vm-ldap-srv:~# apt-get install slapd -y ## pwd
 
-root@vm-ldap-srv:~# dpkg-reconfigure slapd ## (No, homesrv01.org, homesrv01, pwd, Yes, No)
+root@vm-ldap-srv:~# dpkg-reconfigure slapd ## No, homesrv01.org, homesrv01, pwd, Yes, No
 
 root@vm-ldap-srv:~# ls -l /var/lib/ldap/
 total 60
@@ -103,7 +103,7 @@ result: 0 Success
 2) Setup LDAP Client:
 
 ```console
-root@vm-ldap-client:~# apt-get install libnss-ldap libpam-ldap nscd -y ## (ldap://IP-адрес LDAP сервера, dc=homesrv01,dc=ru, LDAP ver. 3, No, Yes, cn=proxyuser,dc=homesv01,dc=ru, %proxyuser pwd)
+root@vm-ldap-client:~# apt-get install libnss-ldap libpam-ldap nscd -y ## ldap://IP-адрес LDAP сервера, dc=homesrv01,dc=ru, LDAP ver. 3, No, Yes, cn=proxyuser,dc=homesv01,dc=ru, %proxyuser pwd
 
 root@vm-ldap-client:~# cat /etc/nsswitch.conf ## ldap
 # /etc/nsswitch.conf

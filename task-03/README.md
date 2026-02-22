@@ -129,8 +129,6 @@ netgroup:       nis ldap
 
 root@vm-ldap-client:~# nano /etc/nsswitch.conf
 
-
-
 root@vm-ldap-client:~# getent passwd proxyuser
 
 root@vm-ldap-client:~# pam-auth-update ## Create home directory on login

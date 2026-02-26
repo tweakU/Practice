@@ -72,9 +72,9 @@ NOW: mysql-slave SIDE
 root@mysql-slave:~# mysql --version
 root@mysql-slave:~# cd /etc/mysql/mysql.conf.d/
 root@mysql-slave:/etc/mysql/mysql.conf.d# nano mysqld.cnf
-# bind-address = 0.0.0.0
-# server-id = 1
-# binlog_format = row
+# server-id = 2
+# relay-log = relay-log-server
+# read-only = on
 # gtid-mode = on
 # enforce-gtid-consistency
 # log-replica-updates

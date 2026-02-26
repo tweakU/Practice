@@ -26,6 +26,46 @@ root@mysql-master:/etc/mysql/mysql.conf.d# ps afx | grep mysql
    2087 pts/0    S+     0:00          \_ grep --color=auto mysql
    2027 ?        Ssl    0:02 /usr/sbin/mysqld
 
+root@mysql-master:/etc/mysql/mysql.conf.d# cd ..
+root@mysql-master:/etc/mysql/mysql.conf.d# mysql
+mysql> SHOW MASTER STATUS; # данная комманда служит для определения binlog позиции; в данном примере не используется
++---------------+----------+--------------+------------------+-------------------+
+| File          | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++---------------+----------+--------------+------------------+-------------------+
+| binlog.000009 |      157 |              |                  |                   |
++---------------+----------+--------------+------------------+-------------------+
+1 row in set (0.00 sec)
+
+mysql> CREATE USER repl@'%' IDENTIFIED WITH 'caching_sha2_password' BY 'p7+kRwqR=bZc8V.@d-qt'; # создадим нового пользователя
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> GRANT REPLICATION SLAVE ON *.* TO repl@'%'; # выдадим права пользователю repl@'%' (с любого хоста) на все БД, таблицы (*.*) 
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT User, Host FROM mysql.user;
++------------------+-----------+
+| User             | Host      |
++------------------+-----------+
+| repl             | %         |
+| debian-sys-maint | localhost |
+| mysql.infoschema | localhost |
+| mysql.session    | localhost |
+| mysql.sys        | localhost |
+| root             | localhost |
++------------------+-----------+
+6 rows in set (0.01 sec)
+
+mysql>
+
+
+
+
+
+
+
+
+
+
 
 ```
 

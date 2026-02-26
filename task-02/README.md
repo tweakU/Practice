@@ -1,4 +1,4 @@
-## [MySQL Репликация](https://my.rebrainme.com/video/1358?course=podpiska-linux)
+## [MySQL Репликация (REBRAIN)](https://my.rebrainme.com/video/1358?course=podpiska-linux)
 
 
 ## Практическая работа № 4 — «MySQL master-slave репликация»

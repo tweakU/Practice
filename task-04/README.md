@@ -556,10 +556,7 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 
 -- Dump completed on 2026-02-26 15:31:48
 
-## Смысл ключа --set-gtid-purged=COMMENTED 
-
-
-
+## Смысл ключа --set-gtid-purged=COMMENTED заключется в следующем: если он закоментирован, slave будет создан от момента создания бэкапа (ранее это называлосб binlog позиция) до конца master (!! НУЖНО ПРОВЕРИТЬ)
 ```
 
 

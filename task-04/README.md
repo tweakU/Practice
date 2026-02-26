@@ -55,22 +55,44 @@ mysql> SELECT User, Host FROM mysql.user;
 +------------------+-----------+
 6 rows in set (0.01 sec)
 
-mysql>
+mysql> SHOW MASTER STATUS; # столбец "Executed_Gtid_Set" получил значение "ID сервера: диапозон выполненных транзакций"  
++---------------+----------+--------------+------------------+------------------------------------------+
+| File          | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set                        |
++---------------+----------+--------------+------------------+------------------------------------------+
+| binlog.000009 |      691 |              |                  | d84f56fa-12eb-11f1-936e-08002719c604:1-2 |
++---------------+----------+--------------+------------------+------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> 
+```
 
 
+NOW: mysql-slave SIDE
+```console
+root@mysql-slave:~# mysql --version
+root@mysql-slave:~# cd /etc/mysql/mysql.conf.d/
+root@mysql-slave:/etc/mysql/mysql.conf.d# nano mysqld.cnf
+# bind-address = 0.0.0.0
+# server-id = 1
+# binlog_format = row
+# gtid-mode = on
+# enforce-gtid-consistency
+# log-replica-updates
 
+root@mysql-slave:/etc/mysql/mysql.conf.d# service mysql restart
 
+root@mysql-slave:/etc/mysql/mysql.conf.d# ps afx | grep mysql
+   2087 pts/0    S+     0:00          \_ grep --color=auto mysql
+   2027 ?        Ssl    0:02 /usr/sbin/mysqld
 
-
-
-
-
-
+root@mysql-slave:/etc/mysql/mysql.conf.d# cd ..
+root@mysql-slave:/etc/mysql/mysql.conf.d# mysql
 
 ```
 
 
-2) GTID
+
+
 
 
 **Практическое задание выполнено**.

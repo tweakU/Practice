@@ -9,6 +9,7 @@
 **Master-slave replication:**
 ```console
 **mysql-01**
+
 root@mysql01:~# nano /etc/mysql/mariadb.conf.d/50-server.cnf 
 bind-address = 0.0.0.0
 server-id = 1 (2, 3 etc, UNIQUE NAME PREFER - LIKE HOST IP-ADDRESS)
@@ -52,12 +53,22 @@ MariaDB [(none)]> SHOW MASTER STATUS;
 +------------------+----------+--------------+------------------+
 1 row in set (0.000 sec)
 
-MariaDB [(none)]>
+MariaDB [(none)]> SHOW MASTER STATUS \G;
+*************************** 1. row ***************************
+            File: mysql-bin.000001
+        Position: 1076
+    Binlog_Do_DB: 
+Binlog_Ignore_DB: 
+1 row in set (0.000 sec)
 
+ERROR: No query specified
+
+MariaDB [(none)]>
 ```
 
 ```console
 **mysql-02**
+
 root@mysql02:~# nano /etc/mysql/mariadb.conf.d/50-server.cnf 
 server-id = 2 (3, 4 etc, UNIQUE NAME PREFER - LIKE HOST IP-ADDRESS)
 log_bin = /var/log/mysql/mysql-bin.log
@@ -91,7 +102,18 @@ root@mysql02:~# mysql
 ```
 
 ```console
-**mysql-03**  
+**mysql-03**
+
+root@mysql03:~# nano /etc/mysql/mariadb.conf.d/50-server.cnf 
+server-id = 3 (4, 5 etc, UNIQUE NAME PREFER - LIKE HOST IP-ADDRESS)
+log_bin = /var/log/mysql/mysql-bin.log
+binlog-format = row
+log-slave-updates = 1
+
+root@mysql03:~# mkdir -p -m 2750 /var/log/mysql && chown mysql /var/log/mysql
+root@mysql03:~# service mariadb restart
+
+root@mysql03:~# mysql
 
 ```
 

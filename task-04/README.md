@@ -8,7 +8,8 @@
 
 ![binlog position](https://github.com/user-attachments/assets/46c38fe7-6635-4b4b-9b4d-6d9691fa0bca)
 
-mysql-master 
+mysql-master
+![Screenshot_2026-02-26-11-10-02-398_com alphainventor filemanager](https://github.com/user-attachments/assets/47c91ddc-7bcd-4f5d-97b9-a3932e495774)
 ```console
 root@mysql-master:~# mysql --version
 root@mysql-master:~# cd /etc/mysql/mysql.conf.d/
@@ -151,6 +152,7 @@ root@mysql-master:~/tmp/test_db# mysql -t < ./employees.sql
 
 
 mysql-slave
+![Screenshot_2026-02-26-11-12-37-263_com alphainventor filemanager](https://github.com/user-attachments/assets/ab0e2011-39b2-4cb9-b4f7-3bcf184fc4db)
 ```console
 root@mysql-slave:~# mysql --version
 root@mysql-slave:~# cd /etc/mysql/mysql.conf.d/

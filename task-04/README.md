@@ -422,6 +422,8 @@ Source_SSL_Verify_Server_Cert: No
 mysql> EXIT;
 ```
 
+mysqldump
+https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html
 ```console
 
 ```

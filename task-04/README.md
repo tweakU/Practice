@@ -147,15 +147,6 @@ root@mysql-master:~/tmp/test_db# mysql -t < ./employees.sql
 +---------------------+
 | 00:00:38            |
 +---------------------+
-
-
-
-
-
-
-
-
-
 ```
 
 
@@ -362,7 +353,7 @@ mysql> EXIT;
 ```
 
 ```console
-root@mysql-master:~# mysql < -uroot -p db_name ./db_dump.sql
+root@mysql-master:~# mysql
 
 mysql> SHOW REPLICA STATUS \G
 *************************** 1. row ***************************

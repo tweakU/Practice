@@ -425,7 +425,7 @@ mysql> EXIT;
 mysqldump  
 
 https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html -->  
-https://dev.mysql.com/doc/refman/8.0/en/replication-options-gtids.html#sysvar_gtid_purged
+(здесь)[https://dev.mysql.com/doc/refman/8.0/en/replication-options-gtids.html#sysvar_gtid_purged](https://dev.mysql.com/doc/refman/8.4/en/mysqldump.html#option_mysqldump_set-gtid-purged)
 ```console
 
 ```

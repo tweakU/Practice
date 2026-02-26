@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# MySQL backup script
+# MySQL backup script (логические бэкапы mysqldump)
 
 MYSQL='mysql --skip-column-names'
 

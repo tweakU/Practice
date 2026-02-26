@@ -284,8 +284,30 @@ Source_SSL_Verify_Server_Cert: No
             Network_Namespace:
 1 row in set (0.00 sec)
 
-mysql>
+mysql> USE OTUS;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
 
+Database changed
+mysql> SHOW TABLES;
++----------------+
+| Tables_in_OTUS |
++----------------+
+| test_tbl       |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT * FROM test_tbl;
++------+
+| id   |
++------+
+|    2 |
+|    3 |
+|    4 |
++------+
+3 rows in set (0.00 sec)
+
+mysql>
 
 
 

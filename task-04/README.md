@@ -4,9 +4,9 @@
 
 **Выполнение практического задания**:
 
-1) ![binlog position](https://github.com/user-attachments/assets/46c38fe7-6635-4b4b-9b4d-6d9691fa0bca)
+![GTID](https://github.com/user-attachments/assets/6b254659-e2f3-48d4-872e-c8a6d4786433)
 
-3) ![GTID](https://github.com/user-attachments/assets/6b254659-e2f3-48d4-872e-c8a6d4786433)
+![binlog position](https://github.com/user-attachments/assets/46c38fe7-6635-4b4b-9b4d-6d9691fa0bca)
 
 mysql-master 
 ```console

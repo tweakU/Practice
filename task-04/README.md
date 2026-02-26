@@ -8,7 +8,7 @@
 2) GTID
 
 
-LET`S START: mysql-master SIDE 
+mysql-master 
 ```console
 root@mysql-master:~# mysql --version
 root@mysql-master:~# cd /etc/mysql/mysql.conf.d/
@@ -150,7 +150,7 @@ root@mysql-master:~/tmp/test_db# mysql -t < ./employees.sql
 ```
 
 
-NOW: mysql-slave SIDE
+mysql-slave
 ```console
 root@mysql-slave:~# mysql --version
 root@mysql-slave:~# cd /etc/mysql/mysql.conf.d/
@@ -426,16 +426,15 @@ mysqldump
 
 https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html --> [--set-gtid-purged](https://dev.mysql.com/doc/refman/8.4/en/mysqldump.html#option_mysqldump_set-gtid-purged)
 ```console
-root@mysql-slave:~# mysqldump otus > dump.sql
+root@mysql-slave:~# mysqldump OTUS > dump.sql
 Warning: A partial dump from a server that has GTIDs will by default include the GTIDs of all transactions, even those that changed suppressed parts of the database. If you don't want to restore GTIDs, pass --set-gtid-purged=OFF. To make a complete dump, pass --all-databases --triggers --routines --events.
 Warning: A dump from a server that has GTIDs enabled will by default include the GTIDs of all transactions, even those that were executed during its extraction and might not be represented in the dumped data. This might result in an inconsistent data dump.
 In order to ensure a consistent backup of the database, pass --single-transaction or --lock-all-tables or --master-data.
-mysqldump: Got error: 1049: Unknown database 'otus' when selecting the database
 
 root@mysql-slave:~# cat dump.sql
 -- MySQL dump 10.13  Distrib 8.0.45, for Linux (x86_64)
 --
--- Host: localhost    Database: otus
+-- Host: localhost    Database: OTUS
 -- ------------------------------------------------------
 -- Server version       8.0.45-0ubuntu0.24.04.1
 
@@ -458,12 +457,49 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 
 SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'd84f56fa-12eb-11f1-936e-08002719c604:1-184';
 
-root@mysql-slave:~# mysqldump --set-gtid-purged=COMMENTED otus > dump2.sql
+--
+-- Table structure for table `test_tbl`
+--
+
+DROP TABLE IF EXISTS `test_tbl`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `test_tbl` (
+  `id` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `test_tbl`
+--
+
+LOCK TABLES `test_tbl` WRITE;
+/*!40000 ALTER TABLE `test_tbl` DISABLE KEYS */;
+INSERT INTO `test_tbl` VALUES (2),(3),(4);
+/*!40000 ALTER TABLE `test_tbl` ENABLE KEYS */;
+UNLOCK TABLES;
+SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-02-26 15:31:31
+
+root@mysql-slave:~# mysqldump --set-gtid-purged=COMMENTED OTUS > dump2.sql
+Warning: A partial dump from a server that has GTIDs will by default include the GTIDs of all transactions, even those that changed suppressed parts of the database. If you don't want to restore GTIDs, pass --set-gtid-purged=OFF. To make a complete dump, pass --all-databases --triggers --routines --events.
+Warning: A dump from a server that has GTIDs enabled will by default include the GTIDs of all transactions, even those that were executed during its extraction and might not be represented in the dumped data. This might result in an inconsistent data dump.
+In order to ensure a consistent backup of the database, pass --single-transaction or --lock-all-tables or --master-data.
 
 root@mysql-slave:~# cat dump2.sql
 -- MySQL dump 10.13  Distrib 8.0.45, for Linux (x86_64)
 --
--- Host: localhost    Database: otus
+-- Host: localhost    Database: OTUS
 -- ------------------------------------------------------
 -- Server version       8.0.45-0ubuntu0.24.04.1
 
@@ -486,6 +522,39 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 
 /* SET @@GLOBAL.GTID_PURGED='+d84f56fa-12eb-11f1-936e-08002719c604:1-184';*/
 
+--
+-- Table structure for table `test_tbl`
+--
+
+DROP TABLE IF EXISTS `test_tbl`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `test_tbl` (
+  `id` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `test_tbl`
+--
+
+LOCK TABLES `test_tbl` WRITE;
+/*!40000 ALTER TABLE `test_tbl` DISABLE KEYS */;
+INSERT INTO `test_tbl` VALUES (2),(3),(4);
+/*!40000 ALTER TABLE `test_tbl` ENABLE KEYS */;
+UNLOCK TABLES;
+SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-02-26 15:31:48
 
 ## Смысл ключа --set-gtid-purged=COMMENTED 
 

@@ -76,10 +76,28 @@ mysql> SHOW PROCESSLIST;
 mysql> CREATE DATABASE OTUS;
 Query OK, 1 row affected (0.01 sec)
 
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| OTUS               |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.00 sec)
+
+mysql> USE OTUS;
+Database changed
+mysql> CREATE TABLE test_tbl (id int);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> INSERT INTO test_tbl values (2),(3),(4);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
 mysql>
-
-
-
 
 
 

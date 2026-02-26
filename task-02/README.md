@@ -13,6 +13,14 @@
 
 **mysql-01**
 ```console
+root@mysql01:/etc/mysql/mariadb.conf.d# pwd
+/etc/mysql/mariadb.conf.d
+root@mysql01:/etc/mysql/mariadb.conf.d# nano 50-server.cnf
+# bind-address = 0.0.0.0
+# server-id = 1 (2, 3 etc, UNIQUE NAME PREFER - LIKE HOST IP-ADDRESS)
+# log_bin = /var/log/mysql/mysql-bin.log
+# binlog-format = row
+# log-slave-updates = 1
 
 ```
 

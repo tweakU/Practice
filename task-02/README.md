@@ -207,9 +207,24 @@ Slave_Non_Transactional_Groups: 0
           Replicate_Rewrite_DB:
 1 row in set (0.000 sec)
 
+MariaDB [(none)]> STOP SLAVE;
+Query OK, 0 rows affected (0.008 sec)
+
+MariaDB [(none)]> RESET SLAVE ALL;
+Query OK, 0 rows affected, 1 warning (0.001 sec)
+
+MariaDB [(none)]> SHOW WARNINGS;
++-------+------+---------------------------------------------------------------------------------------+
+| Level | Code | Message                                                                               |
++-------+------+---------------------------------------------------------------------------------------+
+| Note  | 4190 | RESET SLAVE is implicitly changing the value of 'Using_Gtid' from 'No' to 'Slave_Pos' |
++-------+------+---------------------------------------------------------------------------------------+
+1 row in set (0.000 sec)
+
+MariaDB [(none)]> SHOW SLAVE STATUS \G
+Empty set (0.000 sec)
+
 MariaDB [(none)]>
-
-
 
 
 

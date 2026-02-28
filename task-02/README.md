@@ -4,7 +4,7 @@
 
 **Цель практического задания: **:  
 1 Репликация Master-slave  
-2 тонкая настройка  
+2 тонкая настройка (innodb_flush_log_at_trx_commit 1=slow, 2=fast; sync_binlog 0=fast 1=reliability)  
 3 Репликация Master-master
 
 **Выполнение практического задания**:
@@ -74,7 +74,27 @@ Query OK, 0 rows affected (0.064 sec)
 MariaDB [(none)]> GRANT ALL PRIVILEGES ON *.* TO 'test'@'%';
 Query OK, 0 rows affected (0.010 sec)
 
+MariaDB [(none)]> SHOW VARIABLES WHERE Variable_Name like 'innodb_flush_log_at_trx_commit' or Variable_Name like 'sync_binlog';
++--------------------------------+-------+
+| Variable_name                  | Value |
++--------------------------------+-------+
+| innodb_flush_log_at_trx_commit | 1     |
+| sync_binlog                    | 0     |
++--------------------------------+-------+
+2 rows in set (0.001 sec)
+
 MariaDB [(none)]>
+
+
+
+
+
+
+
+
+
+
+
 
 ```
 
@@ -2335,7 +2355,18 @@ real	0m0.009s
 user	0m0.003s
 sys	0m0.005s
 root@mysql03:~# time mysqlslap -h 192.168.58.111 -utest -ptest --concurrency=50 --iterations=100 --number-int-cols=5 --number-char-cols=20 --auto-generate-sql --auto-generate-sql-load-type=write --verbose
+Benchmark
+	Average number of seconds to run all queries: 1.118 seconds
+	Minimum number of seconds to run all queries: 0.922 seconds
+	Maximum number of seconds to run all queries: 1.454 seconds
+	Number of clients running queries: 50
+	Average number of queries per client: 0
 
+
+real	4m36.339s
+user	0m1.423s
+sys	0m8.876s
+root@mysql03:~#
 
 
 

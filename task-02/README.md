@@ -4,7 +4,7 @@
 
 **Цель практического задания: **:  
 1 Репликация Master-slave  
-2 тонкая настройка (innodb_flush_log_at_trx_commit 1=slow, 2=fast; sync_binlog 0=fast 1=reliability)  
+2 тонкая настройка (innodb_flush_log_at_trx_commit (способ обработки транзакций) 1=slow, 2=fast; sync_binlog (способ синхронизации) 0=fast 1=reliability)  
 3 Репликация Master-master
 
 **Выполнение практического задания**:

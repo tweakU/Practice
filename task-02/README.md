@@ -542,7 +542,7 @@ Slave_Non_Transactional_Groups: 0
 MariaDB [(none)]>
 ```
 
-Включем MASTER:
+Стартуем MASTER:
 ```console
 MariaDB [(none)]> SHOW MASTER STATUS \G
 *************************** 1. row ***************************
@@ -621,7 +621,7 @@ Slave_Non_Transactional_Groups: 0
 innodb_flush_log_at_trx_commit = 2  
 sync_binlog = 0
 ```
-... при смерти Master, Slave получит ошибку #1236 ... 
+... при смерти MASTER, SLAVE получит ошибку #1236 ... 
 ```console
 MariaDB [(none)]> show slave status \G
 *************************** 1. row ***************************
@@ -683,7 +683,7 @@ Slave_Non_Transactional_Groups: 0
 
 MariaDB [(none)]>
 ```
-... единсвенный способо устранить ошибку #1236 - снять dump с Master, применить его на Slave и заново настроить репликацию. 
+... единсвенный способо устранить ошибку #1236 - снять dump с MASTER, применить его на SLAVE и заново настроить репликацию. 
 
 
 ```console

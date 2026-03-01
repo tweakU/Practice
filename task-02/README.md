@@ -12,10 +12,11 @@
 
 **Выполнение практического задания**:
 
-**Master-slave replication:**  
+**1) MASTER - SLAVE REPLICATION:**  
 
-**SERVER mysql01**
 ```console
+**mysql01 srv**
+
 root@mysql01:~# nano /etc/mysql/mariadb.conf.d/50-server.cnf 
 bind-address = 0.0.0.0
 server-id = 1 (2, 3 etc, UNIQUE NAME PREFER - LIKE HOST IP-ADDRESS)
@@ -73,7 +74,7 @@ MariaDB [(none)]> GRANT ALL PRIVILEGES ON *.* TO 'test'@'%';
 Query OK, 0 rows affected (0.010 sec)
 ```
 
-Поиграем с тонкой настройкой innodb_flush_log_at_trx_commit и sync_binlog
+Настроим движок на максимальную производительность:  
 ```console
 MariaDB [(none)]> SHOW VARIABLES WHERE Variable_Name like 'innodb_flush_log_at_trx_commit' or Variable_Name like 'sync_binlog';
 +--------------------------------+-------+
@@ -104,7 +105,7 @@ MariaDB [(none)]> EXIT;
 
 
 ```console
-**SERVER mysql02**
+**mysql02 srv**
 
 root@mysql02:~# nano /etc/mysql/mariadb.conf.d/50-server.cnf 
 server-id = 2 (3, 4 etc, UNIQUE NAME PREFER - LIKE HOST IP-ADDRESS)
@@ -238,90 +239,32 @@ Slave_Non_Transactional_Groups: 0
     Slave_Transactional_Groups: 0
           Replicate_Rewrite_DB:
 1 row in set (0.000 sec)
-
-MariaDB [(none)]> STOP SLAVE;
-Query OK, 0 rows affected (0.008 sec)
-
-MariaDB [(none)]> RESET SLAVE ALL;
-Query OK, 0 rows affected, 1 warning (0.001 sec)
-
-MariaDB [(none)]> SHOW WARNINGS;
-+-------+------+---------------------------------------------------------------------------------------+
-| Level | Code | Message                                                                               |
-+-------+------+---------------------------------------------------------------------------------------+
-| Note  | 4190 | RESET SLAVE is implicitly changing the value of 'Using_Gtid' from 'No' to 'Slave_Pos' |
-+-------+------+---------------------------------------------------------------------------------------+
-1 row in set (0.000 sec)
-
-MariaDB [(none)]> SHOW SLAVE STATUS \G
-Empty set (0.000 sec)
-
-MariaDB [(none)]> SHOW SLAVE STATUS \G;
-*************************** 1. row ***************************
-                Slave_IO_State: Waiting for master to send event
-                   Master_Host: 192.168.58.111
-                   Master_User: slave
-                   Master_Port: 3306
-                 Connect_Retry: 60
-               Master_Log_File: mysql-bin.000004
-           Read_Master_Log_Pos: 356376815
-                Relay_Log_File: mysqld-relay-bin.000002
-                 Relay_Log_Pos: 124272782
-         Relay_Master_Log_File: mysql-bin.000004
-              Slave_IO_Running: Yes
-             Slave_SQL_Running: Yes
-               Replicate_Do_DB: 
-           Replicate_Ignore_DB: 
-            Replicate_Do_Table: 
-        Replicate_Ignore_Table: 
-       Replicate_Wild_Do_Table: 
-   Replicate_Wild_Ignore_Table: 
-                    Last_Errno: 0
-                    Last_Error: 
-                  Skip_Counter: 0
-           Exec_Master_Log_Pos: 124272569
-               Relay_Log_Space: 356377338
-               Until_Condition: None
-                Until_Log_File: 
-                 Until_Log_Pos: 0
-            Master_SSL_Allowed: No
-            Master_SSL_CA_File: 
-            Master_SSL_CA_Path: 
-               Master_SSL_Cert: 
-             Master_SSL_Cipher: 
-                Master_SSL_Key: 
-         Seconds_Behind_Master: 218
- Master_SSL_Verify_Server_Cert: No
-                 Last_IO_Errno: 0
-                 Last_IO_Error: 
-                Last_SQL_Errno: 0
-                Last_SQL_Error: 
-   Replicate_Ignore_Server_Ids: 
-              Master_Server_Id: 1
-                Master_SSL_Crl: 
-            Master_SSL_Crlpath: 
-                    Using_Gtid: No
-                   Gtid_IO_Pos: 
-       Replicate_Do_Domain_Ids: 
-   Replicate_Ignore_Domain_Ids: 
-                 Parallel_Mode: optimistic
-                     SQL_Delay: 0
-           SQL_Remaining_Delay: NULL
-       Slave_SQL_Running_State: Commit
-              Slave_DDL_Groups: 109
-Slave_Non_Transactional_Groups: 0
-    Slave_Transactional_Groups: 22632
-          Replicate_Rewrite_DB: 
-1 row in set (0.000 sec)
-
-ERROR: No query specified
 ```
+
+Cимулируем нагрузку на Master:
+```console
+root@mysql03:~# time mysqlslap -h 192.168.1.121 -utest -ptest --concurrency=50 --iterations=1000 --number-int-cols=5 --number-char-cols=20 --auto-generate-sql --auto-generate-sql-load-type=write --verbose
+```
+
+```console
+
+```
+
+
+
+
+
+
+
+
+
+
 **(Hard shutdown for Master (@mysql01)**
 ```console
 MariaDB [(none)]> SHOW SLAVE STATUS \G;
 *************************** 1. row ***************************
                 Slave_IO_State: Waiting for master to send event
-                   Master_Host: 192.168.58.111
+                   Master_Host: 192.168.1.121
                    Master_User: slave
                    Master_Port: 3306
                  Connect_Retry: 60
@@ -381,7 +324,7 @@ ERROR: No query specified
 MariaDB [(none)]> SHOW SLAVE STATUS \G;
 *************************** 1. row ***************************
                 Slave_IO_State: Waiting for master to send event
-                   Master_Host: 192.168.58.111
+                   Master_Host: 192.168.1.121
                    Master_User: slave
                    Master_Port: 3306
                  Connect_Retry: 60
@@ -441,7 +384,7 @@ ERROR: No query specified
 MariaDB [(none)]> SHOW SLAVE STATUS \G;
 *************************** 1. row ***************************
                 Slave_IO_State: Reconnecting after a failed master event read
-                   Master_Host: 192.168.58.111
+                   Master_Host: 192.168.1.121
                    Master_User: slave
                    Master_Port: 3306
                  Connect_Retry: 60
@@ -513,32 +456,6 @@ log-slave-updates = 1
 root@mysql03:~# mkdir -p -m 2750 /var/log/mysql && chown mysql /var/log/mysql
 root@mysql03:~# service mariadb restart
 
-root@mysql03:~# time mysqlslap -h 192.168.58.111 -utest -ptest --concurrency=50 --iterations=100 --number-int-cols=5 --number-char-cols=20 --auto-generate-sql --auto-generate-sql-load-type=write --verbose
-mysqlslap: Error when connecting to server: Access denied for user 'test'@'192.168.58.113' (using password: YES)
-
-real	0m0.072s
-user	0m0.003s
-sys	0m0.005s
-root@mysql03:~# time mysqlslap -h 192.168.58.111 -utest -ptest --concurrency=50 --iterations=100 --number-int-cols=5 --number-char-cols=20 --auto-generate-sql --auto-generate-sql-load-type=write --verbose
-mysqlslap: Cannot drop database 'mysqlslap' ERROR : Access denied for user 'test'@'%' to database 'mysqlslap'
-
-real	0m0.009s
-user	0m0.003s
-sys	0m0.005s
-root@mysql03:~# time mysqlslap -h 192.168.58.111 -utest -ptest --concurrency=50 --iterations=100 --number-int-cols=5 --number-char-cols=20 --auto-generate-sql --auto-generate-sql-load-type=write --verbose
-Benchmark
-	Average number of seconds to run all queries: 1.118 seconds
-	Minimum number of seconds to run all queries: 0.922 seconds
-	Maximum number of seconds to run all queries: 1.454 seconds
-	Number of clients running queries: 50
-	Average number of queries per client: 0
-
-
-real	4m36.339s
-user	0m1.423s
-sys	0m8.876s
-root@mysql03:~#
-
 ```
 
 
@@ -552,7 +469,7 @@ sync_binlog = 0
 MariaDB [(none)]> show slave status \G
 *************************** 1. row ***************************
                 Slave_IO_State:
-                   Master_Host: 192.168.21.178
+                   Master_Host: 192.168.1.121
                    Master_User: slave
                    Master_Port: 3306
                  Connect_Retry: 60

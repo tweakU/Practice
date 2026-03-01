@@ -50,19 +50,17 @@ MariaDB [(none)]> SHOW MASTER STATUS;
 +------------------+----------+--------------+------------------+
 | File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
 +------------------+----------+--------------+------------------+
-| mysql-bin.000001 |     1076 |              |                  |
+| mysql-bin.000001 |      328 |              |                  |
 +------------------+----------+--------------+------------------+
 1 row in set (0.000 sec)
 
-MariaDB [(none)]> SHOW MASTER STATUS \G;
+MariaDB [(none)]> SHOW MASTER STATUS \G
 *************************** 1. row ***************************
             File: mysql-bin.000001
-        Position: 1076
-    Binlog_Do_DB: 
-Binlog_Ignore_DB: 
+        Position: 328
+    Binlog_Do_DB:
+Binlog_Ignore_DB:
 1 row in set (0.000 sec)
-
-ERROR: No query specified
 ```
 
 Создадим пользователя test для работы mysqlslap
@@ -118,18 +116,18 @@ root@mysql02:~# mkdir -p -m 2750 /var/log/mysql && chown mysql /var/log/mysql
 root@mysql02:~# service mariadb restart
 
 root@mysql02:~# mysql
-MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.1.121', MASTER_USER='slave', MASTER_PASSWORD='s0SaNfR63zi3g7rvlbNE', MASTER_LOG_FILE = 'mysql-bin.000001', MASTER_LOG_POS = 777;
+MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.21.178', MASTER_USER='slave', MASTER_PASSWORD='s0SaNfR63zi3g7rvlbNE', MASTER_LOG_FILE = 'mysql-bin.000001', MASTER_LOG_POS = 328;
 Query OK, 0 rows affected, 1 warning (0.014 sec)
 
 MariaDB [(none)]> SHOW SLAVE STATUS \G
 *************************** 1. row ***************************
                 Slave_IO_State:
-                   Master_Host: 192.168.1.121
+                   Master_Host: 192.168.21.178
                    Master_User: slave
                    Master_Port: 3306
                  Connect_Retry: 60
                Master_Log_File: mysql-bin.000001
-           Read_Master_Log_Pos: 777
+           Read_Master_Log_Pos: 328
                 Relay_Log_File: mysqld-relay-bin.000001
                  Relay_Log_Pos: 4
          Relay_Master_Log_File: mysql-bin.000001
@@ -144,7 +142,7 @@ MariaDB [(none)]> SHOW SLAVE STATUS \G
                     Last_Errno: 0
                     Last_Error:
                   Skip_Counter: 0
-           Exec_Master_Log_Pos: 777
+           Exec_Master_Log_Pos: 328
                Relay_Log_Space: 256
                Until_Condition: None
                 Until_Log_File:
@@ -162,7 +160,7 @@ MariaDB [(none)]> SHOW SLAVE STATUS \G
                 Last_SQL_Errno: 0
                 Last_SQL_Error:
    Replicate_Ignore_Server_Ids:
-              Master_Server_Id: 0
+              Master_Server_Id: 1
                 Master_SSL_Crl:
             Master_SSL_Crlpath:
                     Using_Gtid: No
@@ -173,9 +171,9 @@ MariaDB [(none)]> SHOW SLAVE STATUS \G
                      SQL_Delay: 0
            SQL_Remaining_Delay: NULL
        Slave_SQL_Running_State:
-              Slave_DDL_Groups: 0
+              Slave_DDL_Groups: 504
 Slave_Non_Transactional_Groups: 0
-    Slave_Transactional_Groups: 0
+    Slave_Transactional_Groups: 106450
           Replicate_Rewrite_DB:
 1 row in set (0.000 sec)
 
@@ -185,12 +183,12 @@ Query OK, 0 rows affected (0.001 sec)
 MariaDB [(none)]> SHOW SLAVE STATUS \G
 *************************** 1. row ***************************
                 Slave_IO_State: Waiting for master to send event
-                   Master_Host: 192.168.1.121
+                   Master_Host: 192.168.21.178
                    Master_User: slave
                    Master_Port: 3306
                  Connect_Retry: 60
                Master_Log_File: mysql-bin.000001
-           Read_Master_Log_Pos: 777
+           Read_Master_Log_Pos: 328
                 Relay_Log_File: mysqld-relay-bin.000002
                  Relay_Log_Pos: 555
          Relay_Master_Log_File: mysql-bin.000001
@@ -205,7 +203,7 @@ MariaDB [(none)]> SHOW SLAVE STATUS \G
                     Last_Errno: 0
                     Last_Error:
                   Skip_Counter: 0
-           Exec_Master_Log_Pos: 777
+           Exec_Master_Log_Pos: 328
                Relay_Log_Space: 865
                Until_Condition: None
                 Until_Log_File:
@@ -234,14 +232,60 @@ MariaDB [(none)]> SHOW SLAVE STATUS \G
                      SQL_Delay: 0
            SQL_Remaining_Delay: NULL
        Slave_SQL_Running_State: Slave has read all relay log; waiting for more updates
-              Slave_DDL_Groups: 0
+              Slave_DDL_Groups: 504
 Slave_Non_Transactional_Groups: 0
-    Slave_Transactional_Groups: 0
+    Slave_Transactional_Groups: 106450
           Replicate_Rewrite_DB:
 1 row in set (0.000 sec)
+
+MariaDB [(none)]>
 ```
 
-Cимулируем нагрузку на Master:
+Ситуация, когда binlog "догоняет:" 
+```console
+**MYSQL02-SRV:**
+MariaDB [(none)]> STOP SLAVE;
+Query OK, 0 rows affected (0.006 sec)
+
+MariaDB [(none)]> RESET SLAVE ALL;
+Query OK, 0 rows affected, 1 warning (0.005 sec)
+
+
+**MYSQL01-SRV:**
+MariaDB [(none)]> CREATE DATABASE t123;
+Query OK, 1 row affected (0.000 sec)
+
+MariaDB [(none)]> CREATE DATABASE t1234;
+Query OK, 1 row affected (0.000 sec)
+
+MariaDB [(none)]> DROP DATABASE t123;
+Query OK, 0 rows affected (0.007 sec)
+
+MariaDB [(none)]> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
+| t1234              |
++--------------------+
+5 rows in set (0.000 sec)
+
+MariaDB [(none)]> SHOW MASTER STATUS \G
+*************************** 1. row ***************************
+            File: mysql-bin.000001
+        Position: 724
+    Binlog_Do_DB:
+Binlog_Ignore_DB:
+1 row in set (0.000 sec)
+```
+ВЫВОД: если начать репликацию с Position: 724, Slave не увидит изменений выше (и это лигично), поэтому нужно использовать позицию binlog до изменений в БД.
+
+ДАЛЕЕ:
+
+Cимулируем нагрузку на БД Master:
 ```console
 root@mysql03:~# time mysqlslap -h 192.168.1.121 -utest -ptest --concurrency=50 --iterations=1000 --number-int-cols=5 --number-char-cols=20 --auto-generate-sql --auto-generate-sql-load-type=write --verbose
 ```

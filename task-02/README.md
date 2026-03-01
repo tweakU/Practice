@@ -71,7 +71,7 @@ MariaDB [(none)]> GRANT ALL PRIVILEGES ON *.* TO 'test'@'%';
 Query OK, 0 rows affected (0.010 sec)
 ```
 
-Поиграемс тонкой настройкой innodb_flush_log_at_trx_commit и sync_binlog
+Поиграем с тонкой настройкой innodb_flush_log_at_trx_commit и sync_binlog
 ```console
 MariaDB [(none)]> SHOW VARIABLES WHERE Variable_Name like 'innodb_flush_log_at_trx_commit' or Variable_Name like 'sync_binlog';
 +--------------------------------+-------+

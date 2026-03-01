@@ -317,7 +317,7 @@ Slave_Non_Transactional_Groups: 0
 
 ERROR: No query specified
 ```
-**!! MASTER (@mysql01) HARD SHUTDOWN**
+**(Hard shutdown for Master (@mysql01)**
 ```console
 MariaDB [(none)]> SHOW SLAVE STATUS \G;
 *************************** 1. row ***************************

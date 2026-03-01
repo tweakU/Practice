@@ -307,9 +307,9 @@ Slave_Non_Transactional_Groups: 0
 1 row in set (0.000 sec)
 
 ERROR: No query specified
-
-**!! MASTER HARD SHUTDOWN**
-
+```
+**!! MASTER (@mysql01) HARD SHUTDOWN**
+```console
 MariaDB [(none)]> SHOW SLAVE STATUS \G;
 *************************** 1. row ***************************
                 Slave_IO_State: Waiting for master to send event

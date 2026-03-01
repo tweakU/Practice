@@ -4,7 +4,7 @@
 
 **Цель практического задания: **:  
 1 Репликация Master-slave  
-2 тонкая настройка (innodb_flush_log_at_trx_commit (способ обработки транзакций) 1=slow, 2=fast; sync_binlog (способ синхронизации) 0=fast 1=reliability)  
+2 Тонкая настройка движка (innodb_flush_log_at_trx_commit (способ обработки транзакций) 1=slow, 2=fast; sync_binlog (способ синхронизации) 0=fast 1=reliability)  
 3 Репликация Master-master
 
 **Выполнение практического задания**:
@@ -60,13 +60,19 @@ Binlog_Ignore_DB:
 1 row in set (0.000 sec)
 
 ERROR: No query specified
+```
 
+Создадим пользователя test для работы mysqlslap
+```console
 MariaDB [(none)]> CREATE USER 'test'@'%' IDENTIFIED BY 'test';
 Query OK, 0 rows affected (0.064 sec)
 
 MariaDB [(none)]> GRANT ALL PRIVILEGES ON *.* TO 'test'@'%';
 Query OK, 0 rows affected (0.010 sec)
+```
 
+Поиграемс тонкой настройкой innodb_flush_log_at_trx_commit и sync_binlog
+```console
 MariaDB [(none)]> SHOW VARIABLES WHERE Variable_Name like 'innodb_flush_log_at_trx_commit' or Variable_Name like 'sync_binlog';
 +--------------------------------+-------+
 | Variable_name                  | Value |

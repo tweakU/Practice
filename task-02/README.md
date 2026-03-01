@@ -308,7 +308,7 @@ Slave_Non_Transactional_Groups: 0
 
 ERROR: No query specified
 
-!! SHUTDOWN MASTER HARD
+**!! MASTER HARD SHUTDOWN**
 
 MariaDB [(none)]> SHOW SLAVE STATUS \G;
 *************************** 1. row ***************************

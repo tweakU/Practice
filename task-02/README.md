@@ -621,7 +621,7 @@ Slave_Non_Transactional_Groups: 0
 innodb_flush_log_at_trx_commit = 2  
 sync_binlog = 0
 ```
-... при смерти MASTER, SLAVE получит ошибку #1236 ... 
+... при смерти MASTER, SLAVE получит ошибку #1236 (в binlog на MASTER отсутствует след. позиция, которую готов получать SLAVE) ... 
 ```console
 MariaDB [(none)]> show slave status \G
 *************************** 1. row ***************************

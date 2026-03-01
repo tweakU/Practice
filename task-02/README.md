@@ -686,6 +686,69 @@ MariaDB [(none)]>
 ... единсвенный способо устранить ошибку #1236 - снять dump с MASTER, применить его на SLAVE и заново настроить репликацию. 
 
 
+Наигрались с параметрами максимальной производительности.
+Пришло время параметров максимальной стабильности:
+SLAVE:
+```console
+MariaDB [(none)]> STOP SLAVE;
+Query OK, 0 rows affected (0.005 sec)
+
+MariaDB [(none)]> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| mysqlslap          |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.000 sec)
+
+MariaDB [(none)]> DROP DATABASE mysqlslap;
+Query OK, 1 row affected (0.010 sec)
+```
+
+MASTER:
+```console
+MariaDB [(none)]> DROP DATABASE mysqlslap;
+Query OK, 1 row affected (0.013 sec)
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```console
 **SERVER mysql03**
 

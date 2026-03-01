@@ -2,7 +2,7 @@
 
 ## Практическая работа № 4 — «MySQL master-slave репликация»
 
-**Цель практического задания:**:  
+**Цель практического задания:**  
 1 Репликация Master-slave  
 2 Тонкая настройка движка (innodb_flush_log_at_trx_commit (способ обработки транзакций) 1=slow, 2=fast; sync_binlog (способ синхронизации) 0=fast 1=reliability)  
 3 Репликация Master-master

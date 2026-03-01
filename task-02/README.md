@@ -14,9 +14,8 @@
 
 **Master-slave replication:**  
 
-```console
 **SERVER mysql01**
-
+```console
 root@mysql01:~# nano /etc/mysql/mariadb.conf.d/50-server.cnf 
 bind-address = 0.0.0.0
 server-id = 1 (2, 3 etc, UNIQUE NAME PREFER - LIKE HOST IP-ADDRESS)

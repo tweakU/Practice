@@ -15,7 +15,7 @@
 **Master-slave replication:**  
 
 ```console
-**mysql-01**
+**SERVER mysql01**
 
 root@mysql01:~# nano /etc/mysql/mariadb.conf.d/50-server.cnf 
 bind-address = 0.0.0.0
@@ -105,7 +105,7 @@ MariaDB [(none)]> EXIT;
 
 
 ```console
-**mysql-02**
+**SERVER mysql02**
 
 root@mysql02:~# nano /etc/mysql/mariadb.conf.d/50-server.cnf 
 server-id = 2 (3, 4 etc, UNIQUE NAME PREFER - LIKE HOST IP-ADDRESS)
@@ -503,7 +503,7 @@ ERROR: No query specified
 
 
 ```console
-**mysql-03**
+**SERVER mysql03**
 
 root@mysql03:~# nano /etc/mysql/mariadb.conf.d/50-server.cnf 
 server-id = 3 (4, 5 etc, UNIQUE NAME PREFER - LIKE HOST IP-ADDRESS)

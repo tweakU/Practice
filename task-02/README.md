@@ -714,12 +714,190 @@ MASTER:
 MariaDB [(none)]> DROP DATABASE mysqlslap;
 Query OK, 1 row affected (0.013 sec)
 
+MariaDB [(none)]> SHOW MASTER STATUS;
++------------------+----------+--------------+------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++------------------+----------+--------------+------------------+
+| mysql-bin.000007 |      488 |              |                  |
++------------------+----------+--------------+------------------+
+1 row in set (0.000 sec)
 
+MariaDB [(none)]>
 ```
 
+SLAVE:
+```console
+MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.1.101', MASTER_USER='slave', MASTER_PASSWORD='s0SaNfR63zi3g7rvlbNE', MASTER_LOG_FILE='mysql-bin.000007', MASTER_LOG_POS=488;
+Query OK, 0 rows affected, 1 warning (0.208 sec)
 
+MariaDB [(none)]> SHOW SLAVE STATUS \G;
+*************************** 1. row ***************************
+                Slave_IO_State: 
+                   Master_Host: 192.168.1.101
+                   Master_User: slave
+                   Master_Port: 3306
+                 Connect_Retry: 60
+               Master_Log_File: mysql-bin.000007
+           Read_Master_Log_Pos: 488
+                Relay_Log_File: mysqld-relay-bin.000001
+                 Relay_Log_Pos: 4
+         Relay_Master_Log_File: mysql-bin.000007
+              Slave_IO_Running: No
+             Slave_SQL_Running: No
+               Replicate_Do_DB: 
+           Replicate_Ignore_DB: 
+            Replicate_Do_Table: 
+        Replicate_Ignore_Table: 
+       Replicate_Wild_Do_Table: 
+   Replicate_Wild_Ignore_Table: 
+                    Last_Errno: 0
+                    Last_Error: 
+                  Skip_Counter: 0
+           Exec_Master_Log_Pos: 488
+               Relay_Log_Space: 256
+               Until_Condition: None
+                Until_Log_File: 
+                 Until_Log_Pos: 0
+            Master_SSL_Allowed: No
+            Master_SSL_CA_File: 
+            Master_SSL_CA_Path: 
+               Master_SSL_Cert: 
+             Master_SSL_Cipher: 
+                Master_SSL_Key: 
+         Seconds_Behind_Master: NULL
+ Master_SSL_Verify_Server_Cert: No
+                 Last_IO_Errno: 0
+                 Last_IO_Error: 
+                Last_SQL_Errno: 0
+                Last_SQL_Error: 
+   Replicate_Ignore_Server_Ids: 
+              Master_Server_Id: 1
+                Master_SSL_Crl: 
+            Master_SSL_Crlpath: 
+                    Using_Gtid: No
+                   Gtid_IO_Pos: 
+       Replicate_Do_Domain_Ids: 
+   Replicate_Ignore_Domain_Ids: 
+                 Parallel_Mode: optimistic
+                     SQL_Delay: 0
+           SQL_Remaining_Delay: NULL
+       Slave_SQL_Running_State: 
+              Slave_DDL_Groups: 240
+Slave_Non_Transactional_Groups: 0
+    Slave_Transactional_Groups: 51796
+          Replicate_Rewrite_DB: 
+1 row in set (0.000 sec)
 
+ERROR: No query specified
 
+MariaDB [(none)]> START SLAVE;
+Query OK, 0 rows affected (0.003 sec)
+
+MariaDB [(none)]> SHOW SLAVE STATUS \G;
+*************************** 1. row ***************************
+                Slave_IO_State: Waiting for master to send event
+                   Master_Host: 192.168.1.101
+                   Master_User: slave
+                   Master_Port: 3306
+                 Connect_Retry: 60
+               Master_Log_File: mysql-bin.000007
+           Read_Master_Log_Pos: 488
+                Relay_Log_File: mysqld-relay-bin.000002
+                 Relay_Log_Pos: 555
+         Relay_Master_Log_File: mysql-bin.000007
+              Slave_IO_Running: Yes
+             Slave_SQL_Running: Yes
+               Replicate_Do_DB: 
+           Replicate_Ignore_DB: 
+            Replicate_Do_Table: 
+        Replicate_Ignore_Table: 
+       Replicate_Wild_Do_Table: 
+   Replicate_Wild_Ignore_Table: 
+                    Last_Errno: 0
+                    Last_Error: 
+                  Skip_Counter: 0
+           Exec_Master_Log_Pos: 488
+               Relay_Log_Space: 865
+               Until_Condition: None
+                Until_Log_File: 
+                 Until_Log_Pos: 0
+            Master_SSL_Allowed: No
+            Master_SSL_CA_File: 
+            Master_SSL_CA_Path: 
+               Master_SSL_Cert: 
+             Master_SSL_Cipher: 
+                Master_SSL_Key: 
+         Seconds_Behind_Master: 0
+ Master_SSL_Verify_Server_Cert: No
+                 Last_IO_Errno: 0
+                 Last_IO_Error: 
+                Last_SQL_Errno: 0
+                Last_SQL_Error: 
+   Replicate_Ignore_Server_Ids: 
+              Master_Server_Id: 1
+                Master_SSL_Crl: 
+            Master_SSL_Crlpath: 
+                    Using_Gtid: No
+                   Gtid_IO_Pos: 
+       Replicate_Do_Domain_Ids: 
+   Replicate_Ignore_Domain_Ids: 
+                 Parallel_Mode: optimistic
+                     SQL_Delay: 0
+           SQL_Remaining_Delay: NULL
+       Slave_SQL_Running_State: Slave has read all relay log; waiting for more updates
+              Slave_DDL_Groups: 240
+Slave_Non_Transactional_Groups: 0
+    Slave_Transactional_Groups: 51796
+          Replicate_Rewrite_DB: 
+1 row in set (0.000 sec)
+
+ERROR: No query specified
+
+# on the MASTER: MariaDB [(none)]> CREATE DATABASE DB_after_MASTER_down;
+
+MariaDB [(none)]> SHOW DATABASES;
++----------------------+
+| Database             |
++----------------------+
+| DB_after_MASTER_down |
+| information_schema   |
+| mysql                |
+| performance_schema   |
+| sys                  |
++----------------------+
+5 rows in set (0.001 sec)
+
+# on the MASTER: MariaDB [(none)]> DROP DATABASE DB_after_MASTER_down;
+
+MariaDB [(none)]> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.000 sec)
+```
+
+MASTER:
+```console
+MariaDB [(none)]> set global innodb_flush_log_at_trx_commit = 1;
+Query OK, 0 rows affected (0.000 sec)
+
+MariaDB [(none)]> set global sync_binlog = 1;
+Query OK, 0 rows affected (0.000 sec)
+
+MariaDB [(none)]> SHOW VARIABLES WHERE Variable_Name like 'innodb_flush_log_at_trx_commit' or Variable_Name like 'sync_binlog';
++--------------------------------+-------+
+| Variable_name                  | Value |
++--------------------------------+-------+
+| innodb_flush_log_at_trx_commit | 1     |
+| sync_binlog                    | 1     |
++--------------------------------+-------+
+2 rows in set (0.001 sec)
+```
 
 
 

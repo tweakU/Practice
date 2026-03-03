@@ -980,28 +980,78 @@ ERROR: No query specified
 MariaDB [(none)]>
 ```
 
+SPEEDTEST COMP:
+```console
+MariaDB [(none)]> SHOW VARIABLES WHERE Variable_Name like 'innodb_flush_log_at_trx_commit' or Variable_Name like 'sync_binlog';
++--------------------------------+-------+
+| Variable_name                  | Value |
++--------------------------------+-------+
+| innodb_flush_log_at_trx_commit | 2     |
+| sync_binlog                    | 0     |
++--------------------------------+-------+
+2 rows in set (0.001 sec)
 
 
+root@mysql01:~# iostat -s 1 -x
+Linux 6.8.0-101-generic (mysql01) 	03/04/26 	_x86_64_	(1 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+          24.24    0.00   33.33   41.41    0.00    1.01
+
+Device             tps      kB/s    rqm/s   await  areq-sz  aqu-sz  %util
+dm-0            465.00   2660.50     0.00    1.49     5.72    0.69  66.90
+loop0             0.00      0.00     0.00    0.00     0.00    0.00   0.00
+sda             352.00   2660.50   113.00    1.96     7.56    1.34  62.80
 
 
+root@mysql03:~# time mysqlslap -h 192.168.1.101 -utest -ptest --concurrency=50 --iterations=100 --number-int-cols=5 --number-char-cols=20 --auto-generate-sql --auto-generate-sql-load-type=write --verbose
+Benchmark
+	Average number of seconds to run all queries: 0.831 seconds
+	Minimum number of seconds to run all queries: 0.765 seconds
+	Maximum number of seconds to run all queries: 1.112 seconds
+	Number of clients running queries: 50
+	Average number of queries per client: 0
+
+real	2m32.417s
+user	0m1.483s
+sys	0m9.413s
+
+###########################################################################
+
+MariaDB [(none)]> SHOW VARIABLES WHERE Variable_Name like 'innodb_flush_log_at_trx_commit' or Variable_Name like 'sync_binlog';
++--------------------------------+-------+
+| Variable_name                  | Value |
++--------------------------------+-------+
+| innodb_flush_log_at_trx_commit | 1     |
+| sync_binlog                    | 1     |
++--------------------------------+-------+
+2 rows in set (0.001 sec)
 
 
+root@mysql01:~# iostat -s 1 -x
+Linux 6.8.0-101-generic (mysql01) 	03/04/26 	_x86_64_	(1 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           2.06    0.00    5.15   92.78    0.00    0.00
+
+Device             tps      kB/s    rqm/s   await  areq-sz  aqu-sz  %util
+dm-0            456.00   1515.50     0.00    2.13     3.32    0.97  95.10
+loop0             0.00      0.00     0.00    0.00     0.00    0.00   0.00
+sda             234.00   1515.50   222.00    4.08     6.48    1.89  94.70
 
 
+root@mysql03:~# time mysqlslap -h 192.168.1.101 -utest -ptest --concurrency=50 --iterations=100 --number-int-cols=5 --number-char-cols=20 --auto-generate-sql --auto-generate-sql-load-type=write --verbose
+Benchmark
+	Average number of seconds to run all queries: 1.747 seconds
+	Minimum number of seconds to run all queries: 1.591 seconds
+	Maximum number of seconds to run all queries: 1.885 seconds
+	Number of clients running queries: 50
+	Average number of queries per client: 0
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+real	8m1.430s
+user	0m1.571s
+sys	0m10.163s
+```
 
 
 ```console

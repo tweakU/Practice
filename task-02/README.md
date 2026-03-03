@@ -15,7 +15,7 @@
 **1) MASTER - SLAVE REPLICATION:**  
 
 ```console
-**mysql01 srv**
+**MYSQL01-SRV**
 
 root@mysql01:~# nano /etc/mysql/mariadb.conf.d/50-server.cnf 
 bind-address = 0.0.0.0
@@ -103,7 +103,7 @@ MariaDB [(none)]> EXIT;
 
 
 ```console
-**mysql02 srv**
+**MYSQL02-SRV**
 
 root@mysql02:~# nano /etc/mysql/mariadb.conf.d/50-server.cnf 
 server-id = 2 (3, 4 etc, UNIQUE NAME PREFER - LIKE HOST IP-ADDRESS)
@@ -1055,7 +1055,7 @@ sys	0m10.163s
 
 Как победить Seconds_Behind_Master:
 ```console
-**SERVER mysql03**
+**MYSQL03-SRV**
 
 root@mysql03:~# nano /etc/mysql/mariadb.conf.d/50-server.cnf 
 server-id = 3 (4, 5 etc, UNIQUE NAME PREFER - LIKE HOST IP-ADDRESS)

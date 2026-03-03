@@ -1053,7 +1053,7 @@ user	0m1.571s
 sys	0m10.163s
 ```
 
-
+Как победить Seconds_Behind_Master:
 ```console
 **SERVER mysql03**
 
@@ -1065,9 +1065,64 @@ log-slave-updates = 1
 
 root@mysql03:~# mkdir -p -m 2750 /var/log/mysql && chown mysql /var/log/mysql
 root@mysql03:~# service mariadb restart
+root@mysql03:~# mysql
+
+MariaDB [(none)]> SHOW VARIABLES LIKE '%thread%';
++-----------------------------------------+---------------------------+
+| Variable_name                           | Value                     |
++-----------------------------------------+---------------------------+
+| aria_repair_threads                     | 1                         |
+| binlog_optimize_thread_scheduling       | ON                        |
+| debug_no_thread_alarm                   | OFF                       |
+| innodb_encryption_threads               | 0                         |
+| innodb_purge_threads                    | 4                         |
+| innodb_read_io_threads                  | 4                         |
+| innodb_write_io_threads                 | 4                         |
+| max_delayed_threads                     | 20                        |
+| max_insert_delayed_threads              | 20                        |
+| myisam_repair_threads                   | 1                         |
+| performance_schema_max_thread_classes   | 50                        |
+| performance_schema_max_thread_instances | -1                        |
+| pseudo_thread_id                        | 32                        |
+| slave_domain_parallel_threads           | 0                         |
+| slave_parallel_threads                  | 0                         |
+| thread_cache_size                       | 151                       |
+| thread_handling                         | one-thread-per-connection |
+| thread_pool_dedicated_listener          | OFF                       |
+| thread_pool_exact_stats                 | OFF                       |
+| thread_pool_idle_timeout                | 60                        |
+| thread_pool_max_threads                 | 65536                     |
+| thread_pool_oversubscribe               | 3                         |
+| thread_pool_prio_kickup_timer           | 1000                      |
+| thread_pool_priority                    | auto                      |
+| thread_pool_size                        | 1                         |
+| thread_pool_stall_limit                 | 500                       |
+| thread_stack                            | 299008                    |
+| wsrep_slave_threads                     | 1                         |
++-----------------------------------------+---------------------------+
+28 rows in set (0.002 sec)
+
+MariaDB [(none)]> SHOW VARIABLES LIKE 'slave_parallel_threads';
++------------------------+-------+
+| Variable_name          | Value |
++------------------------+-------+
+| slave_parallel_threads | 0     |
++------------------------+-------+
+1 row in set (0.001 sec)
+
+MariaDB [(none)]> SET GLOBAL slave_parallel_threads = 100;
+Query OK, 0 rows affected (0.000 sec)
+
+MariaDB [(none)]> SHOW VARIABLES LIKE 'slave_parallel_threads';
++------------------------+-------+
+| Variable_name          | Value |
++------------------------+-------+
+| slave_parallel_threads | 100   |
++------------------------+-------+
+1 row in set (0.001 sec)
+
+MariaDB [(none)]> EXIT;
 ```
-
-
 
 
 **Практическое задание выполнено**.

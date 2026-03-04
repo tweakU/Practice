@@ -1,6 +1,6 @@
 ## [MySQL Репликация (REBRAIN)](https://my.rebrainme.com/video/1358?course=podpiska-linux)
 
-## Практическая работа № 4 — «MySQL master-slave репликация»
+## Практическая работа № 04 — «MySQL master-slave репликация»
 
 **Цель практического задания:**  
 1) Репликация Master-Slave  

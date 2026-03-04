@@ -1,12 +1,12 @@
 ## «Настройка LDAP сервера»
 
-[ЧТИВО:](https://www.freeipa.org/page/Demo)
+[ЧТИВО:](https://my.rebrainme.com/video/1367?course=podpiska-linux)
 
 **Цель задания: **.
 
 **Выполнение задания**:
 
-1) Setup LDAP Server (slapd):
+1) :
 
 ```console
 

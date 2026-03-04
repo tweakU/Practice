@@ -1,6 +1,6 @@
 ## «Отказоустойчивый кластер MySQL»
 
-[ЧТИВО:](https://my.rebrainme.com/video/1367?course=podpiska-linux)
+[Видеоматериалы | REBRAIN | Отказоустойчивый кластер MySQL](https://my.rebrainme.com/video/1367?course=podpiska-linux)
 
 **Цель задания: **.
 

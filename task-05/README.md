@@ -1,4 +1,4 @@
-## «Настройка LDAP сервера»
+## «Отказоустойчивый кластер MySQL»
 
 [ЧТИВО:](https://my.rebrainme.com/video/1367?course=podpiska-linux)
 

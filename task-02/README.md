@@ -1124,35 +1124,61 @@ MariaDB [(none)]> SHOW VARIABLES LIKE 'slave_parallel_threads';
 MariaDB [(none)]> EXIT;
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ИТОГ:  
 какие типовые действия при крахе MASTER? - переключение на SLAVE, дальнейшие действия зависят от DRP, как вариант: в сети "имеется" общий сервисный IP-адрес L3 уровня, который поднимается на интерфейсе вручную (чтобы предоствратить IP-адрес дублицирование) IP-адрес	 "перетаскивается" на SLAVE --> stop slave --> reset slave --> turn slave from ro to rw --> link up  
 
 
+**3) MASTER - MASTER REPLICATION:**  
+**MYSQL02-SRV**
+```console
+MariaDB [(none)]> SELECT user,host FROM mysql.user;
++-------------+-----------+
+| User        | Host      |
++-------------+-----------+
+| test        | %         |
+| mariadb.sys | localhost |
+| mysql       | localhost |
+| root        | localhost |
++-------------+-----------+
+4 rows in set (0.001 sec)
+
+MariaDB [(none)]> CREATE USER 'slave'@'%' IDENTIFIED BY 's0SaNfR63zi3g7rvlbNE';
+Query OK, 0 rows affected (0.560 sec)
+
+MariaDB [(none)]> GRANT ALL PRIVILEGES ON *.* TO 'slave'@'%';
+Query OK, 0 rows affected (0.007 sec)
+
+MariaDB [(none)]> SELECT user,host FROM mysql.user;
++-------------+-----------+
+| User        | Host      |
++-------------+-----------+
+| slave       | %         |
+| test        | %         |
+| mariadb.sys | localhost |
+| mysql       | localhost |
+| root        | localhost |
++-------------+-----------+
+5 rows in set (0.001 sec)
+
+MariaDB [(none)]> SHOW MASTER STATUS \G;
+*************************** 1. row ***************************
+            File: mysql-bin.000011
+        Position: 358147249
+    Binlog_Do_DB: 
+Binlog_Ignore_DB: 
+1 row in set (0.000 sec)
+
+ERROR: No query specified
+
+MariaDB [(none)]>
+
+**MYSQL01-SRV**
+MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.1.102', MASTER_USER='slave', MASTER_PASSWORD='s0SaNfR63zi3g7rvlbNE', MASTER_LOG_FILE='mysql-bin.000011', MASTER_LOG_POS=358147249;
+```
+Далее создаем БД на mysql02, удаляем на mysql01 и т.д.
 
 
-
-
-
-
-
-
-
-
+В таком исполнении - решение говна: если мы, вдруг, разрешаем приложению работать одновременно с двумя БД, то в случае: а) большой нагрузки на БД б) высокой зарежки в сети между нашими мастер-мастер БД - мы можем получить расхождение в БД: если мы вставим запись строку в какой-то конкретной таблицы на первом мастере и тоже самое сделаем на втором, не дождавшись когда к нам придут данные из первого, то мы получим ошибку репликации и с этого момента у нас ломается репликация.
 
 
 **Практическое задание выполнено**.

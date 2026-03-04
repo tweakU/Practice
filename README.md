@@ -1,9 +1,9 @@
 # Landing по курсу «Administrator Linux»
 
 - [Задача № 1 — «Запускам CMS Wordpress на Ubuntu 24.04 (Angie + PHP-FPM)»](task-01)
-- [Задача № 2 — «MySQL Репликация»](task-02)
-- [Задача № 3 — «Настройка LDAP сервера»](task-03)
-- [Задача № 4 — «Установка MySQL-сервера и настройка репликации (OTUS Linux Admin Basic)»](task-04)
+- [Задача № 2 — «Настройка LDAP сервера»](task-03)
+- [Задача № 3 — «Установка MySQL-сервера и настройка репликации (OTUS Linux Admin Basic)»](task-04)
+- [Задача № 4 — «MySQL Репликация»](task-02)
 - [Задача № 5 — «»](task-05)
 - [Задача № 6 — «»](task-06)
 - [Задача № 7 — «»](task-07)

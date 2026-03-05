@@ -42,5 +42,5 @@ cat > /etc/wireguard/wg00.conf
 ctrl + v < wg.conf from WG server
 enter
 ctrl + d
-systemctl start wg-quick@wg0.service
+systemctl start wg-quick@wg00.service
 ```

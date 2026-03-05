@@ -33,6 +33,12 @@ docker run -d \
   --restart unless-stopped \
   ghcr.io/wg-easy/wg-easy:15
 ```
+```console
+ufw allow 51820/udp
+ufw allow 51821/tcp
+ufw reload
+ufw status verbose
+```
 The Web UI will now be available at http://0.0.0.0:51821.
 
 CLIENT SIDE:

@@ -37,6 +37,8 @@ The Web UI will now be available at http://0.0.0.0:51821.
 
 CLIENT SIDE:
 ```console
+apt-get update
+apt-get install wireguard -y
 mkdir -p /etc/wireguard
 cat > /etc/wireguard/wg00.conf
 ctrl + v < wg.conf from WG server

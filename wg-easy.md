@@ -34,3 +34,11 @@ docker run -d \
   ghcr.io/wg-easy/wg-easy:15
 ```
 The Web UI will now be available at http://0.0.0.0:51821.
+
+CLIENT SIDE:
+```console
+mkdir -p /etc/wireguard
+touch /etc/wireguard/wg0.conf
+nano /etc/wireguard/wg0.conf < wg.conf from WG server
+systemctl start wg-quick@wg0.service
+```

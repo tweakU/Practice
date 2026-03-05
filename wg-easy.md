@@ -1,5 +1,6 @@
-https://github.com/wg-easy/wg-easy?tab=readme-ov-file
-https://wg-easy.github.io/wg-easy/latest/examples/tutorials/docker-run/
+[GitHub - wg-easy](https://github.com/wg-easy/wg-easy?tab=readme-ov-file)
+
+[Docker Run - wg-easy](https://wg-easy.github.io/wg-easy/latest/examples/tutorials/docker-run/)
 
 To setup the IPv6 Network, simply run once:
 ```console

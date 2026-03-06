@@ -6,35 +6,35 @@
 
 1) Установите вспомогательные пакеты для подключения репозитория Angie:
 ```console
- sudo apt-get update
- sudo apt-get install -y ca-certificates curl
+apt-get update
+apt-get install -y ca-certificates curl
 ```
 
 2) Скачайте открытый ключ репозитория Angie для проверки подлинности пакетов:
 ```console
- sudo curl -o /etc/apt/trusted.gpg.d/angie-signing.gpg \
+curl -o /etc/apt/trusted.gpg.d/angie-signing.gpg \
             https://angie.software/keys/angie-signing.gpg
 ```
 
 3) Подключите репозиторий Angie:
 ```console
- echo "deb https://download.angie.software/angie/$(. /etc/os-release && echo "$ID/$VERSION_ID $VERSION_CODENAME") main" \
-    | sudo tee /etc/apt/sources.list.d/angie.list > /dev/null
+echo "deb https://download.angie.software/angie/$(. /etc/os-release && echo "$ID/$VERSION_ID $VERSION_CODENAME") main" \
+    | tee /etc/apt/sources.list.d/angie.list > /dev/null
 ```
 
 4) Обновите индексы репозиториев:
 ```console
- sudo apt-get update
+apt-get update
 ```
 
 5) Установите пакет Angie:
 ```console
- sudo apt-get install -y angie
+apt-get install -y angie
 ```
 
 !) Проверим работоспособность сервиса:
 ```console
-funt1k@http:~$ sudo systemctl status angie.service
+funt1k@http:~$ systemctl status angie.service
 ● angie.service - Angie - high performance web server
      Loaded: loaded (/usr/lib/systemd/system/angie.service; enabled; preset: enabled)
      Active: active (running) since Mon 2025-11-24 12:49:27 UTC; 31s ago
@@ -52,22 +52,26 @@ funt1k@http:~$ sudo systemctl status angie.service
 Nov 24 12:49:26 http systemd[1]: Starting angie.service - Angie - high performance web server...
 Nov 24 12:49:27 http systemd[1]: Started angie.service - Angie - high performance web server.
 
-funt1k@http:~$ sudo ss -ntlp | grep 80
+funt1k@http:~$ ss -ntlp | grep 80
 LISTEN 0      511          0.0.0.0:80        0.0.0.0:*    users:(("angie",pid=2137,fd=6),("angie",pid=2136,fd=6),("angie",pid=2135,fd=6))
 ```
 
 
 **Установим дополнительные пакеты (php, mysql etc):**
 ```console
- sudo apt install php8.3 php8.3-fpm php8.3-mysql mysql-server-8.0 php-curl php-gd php-intl php-mbstring php-soap php-xml php-xmlrpc php-zip
+apt-get install php8.3 php8.3-fpm php8.3-mysql mysql-server-8.0 php-curl php-gd php-intl php-mbstring php-soap php-xml php-xmlrpc php-zip
 ```
 
 ```console
-$ mkdir ~/tmp && cd ~/tmp && wget https://ru.wordpress.org/wordpress-6.8.3-ru_RU.tar.gz
+mkdir ~/tmp && cd ~/tmp && wget https://ru.wordpress.org/wordpress-6.8.3-ru_RU.tar.gz
 
-$ tar -xvf ./wordpress-6.8.3-ru_RU.tar.gz
+tar -xvf ./wordpress-6.8.3-ru_RU.tar.gz
 
-$ sudo mkdir -p /var/www/html/
+mkdir -p /var/www/html/
+
+cp -r wordpress var/www/html/
+
+cd /var/www/html/wordpress/
 
 funt1k@http:/var/www/html/wordpress$ ls -la
 total 252
@@ -93,7 +97,7 @@ drwxr-xr-x 30 root root 16384 Nov 24 13:09 wp-includes
 -rw-r--r--  1 root root  5102 Nov 24 13:09 wp-trackback.php
 -rw-r--r--  1 root root  3205 Nov 24 13:09 xmlrpc.php
 
-funt1k@http:~$ sudo find /var/www/html/wordpress -type d -exec chmod 755 {} \;
+find /var/www/html/wordpress -type d -exec chmod 755 {} \;
 
 funt1k@http:~$ ls -la /var/www/html/wordpress/
 total 252
@@ -119,13 +123,13 @@ drwxr-xr-x 30 root root 16384 Nov 24 13:09 wp-includes
 -rw-r--r--  1 root root  5102 Nov 24 13:09 wp-trackback.php
 -rw-r--r--  1 root root  3205 Nov 24 13:09 xmlrpc.php
 
-funt1k@http:~$ sudo touch /var/www/html/wordpress/wp-config.php
+touch /var/www/html/wordpress/wp-config.php
 
-funt1k@http:~$ sudo chmod 640 /var/www/html/wordpress/wp-config.php
+chmod 640 /var/www/html/wordpress/wp-config.php
 
-funt1k@http:~$ sudo mkdir /var/www/html/wordpress/wp-content/uploads
+mkdir /var/www/html/wordpress/wp-content/uploads
 
-funt1k@http:~$ sudo chown -R www-data:www-data /var/www/html/wordpress/
+chown -R www-data:www-data /var/www/html/wordpress/
 
 root@http:/var/www/html/wordpress# mysql
 CREATE DATABASE wordpress_db;

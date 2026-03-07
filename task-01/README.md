@@ -71,7 +71,7 @@ tar -xvf ./wordpress-6.8.3-ru_RU.tar.gz
 
 mkdir -p /var/www/html/
 
-cp -r wordpress var/www/html/
+cp -r wordpress /var/www/html/
 
 cd /var/www/html/wordpress/
 

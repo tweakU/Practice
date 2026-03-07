@@ -63,7 +63,9 @@ apt-get install php8.3 php8.3-fpm php8.3-mysql mysql-server-8.0 php-curl php-gd 
 ```
 
 ```console
-mkdir ~/tmp && cd ~/tmp && wget https://ru.wordpress.org/wordpress-6.8.3-ru_RU.tar.gz
+mkdir ~/tmp && cd ~/tmp
+
+wget https://ru.wordpress.org/wordpress-6.8.3-ru_RU.tar.gz
 
 tar -xvf ./wordpress-6.8.3-ru_RU.tar.gz
 

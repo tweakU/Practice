@@ -100,6 +100,7 @@ drwxr-xr-x 30 root root 16384 Nov 24 13:09 wp-includes
 -rw-r--r--  1 root root  3205 Nov 24 13:09 xmlrpc.php
 
 find /var/www/html/wordpress -type d -exec chmod 755 {} \;
+find /var/www/html/wordpress -type f -exec chmod 644 {} \;
 
 funt1k@http:~$ ls -la /var/www/html/wordpress/
 total 252

@@ -35,9 +35,6 @@ Query OK, 0 rows affected (0.007 sec)
 MariaDB [(none)]> GRANT ALL PRIVILEGES ON *.* TO 'slave'@'%';
 Query OK, 0 rows affected (0.008 sec)
 
-MariaDB [(none)]> FLUSH PRIVILEGES;
-Query OK, 0 rows affected (0.001 sec)
-
 MariaDB [(none)]> SHOW GRANTS FOR 'slave'@'%';
 +---------------------------------------------------------------------------------------------------------------+
 | Grants for slave@%                                                                                            |

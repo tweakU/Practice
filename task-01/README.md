@@ -173,6 +173,60 @@ drwxr-xr-x 2 root root 4096 Mar  7 22:14 .
 drwxr-xr-x 4 root root 4096 Mar  7 23:13 ..
 -rw-r--r-- 1 root root 1177 Feb  6 10:05 default.conf
 
+root@wordpress:/etc/angie/http.d# nano default.conf
+-
+    server {
+    listen       80;
+    server_name  localhost;
+        root /var/www/html/wordpress;
+        index index.php;
+        location ~ /\. {
+                deny all;
+        }
+        location ~ ^/wp-content/cache {
+                deny all;
+        }
+        location ~* /(?:uploads|files)/.*\.php$ {
+                deny all;
+        }
+    location / {
+                try_files $uri $uri/ /index.php?$args;
+    }
+    location /wp-content {
+                add_header Cache-Control "max-age=31536000, public, no-transform, immutable";
+    }
+    location ~* \.(css|gif|ico|jpeg|jpg|js|png)$ {
+                add_header Cache-Control "max-age=31536000, public, no-transform, immutable";
+    }
+    location ~ \.php$ {
+                # fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                include fastcgi.conf;
+                fastcgi_intercept_errors on;
+                #fastcgi_pass 127.0.0.1:9000; tcp socket
+                fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+                fastcgi_index index.php;
+    }
+}
+
+root@wordpress:/etc/angie/http.d# ps afx
+
+   1400 ?        Ss     0:00 angie: master process v1.11.3 #1 [/usr/sbin/angie -c /etc/angie/angie.conf]
+   1401 ?        S      0:00  \_ angie: worker process #1
+   1402 ?        S      0:00  \_ angie: worker process #1
+
+root@wordpress:/etc/angie/http.d# angie -t
+angie: the configuration file /etc/angie/angie.conf syntax is ok
+angie: configuration file /etc/angie/angie.conf test is successful
+
+root@wordpress:/etc/angie/http.d# service angie reload
+root@wordpress:/etc/angie/http.d# ps afx
+   1400 ?        Ss     0:00 angie: master process v1.11.3 #2 [/usr/sbin/angie -c /etc/angie/angie.conf]
+  18116 ?        S      0:00  \_ angie: worker process #2
+  18117 ?        S      0:00  \_ angie: worker process #2
+
+
+
+```
 
 
 
@@ -183,13 +237,12 @@ drwxr-xr-x 4 root root 4096 Mar  7 23:13 ..
 
 
 
-
-
-
-
-
-
-
-
-
+```console
+mysql> SHOW MASTER STATUS;
++---------------+----------+--------------+------------------+-------------------+
+| File          | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++---------------+----------+--------------+------------------+-------------------+
+| binlog.000003 |      947 |              |                  |                   |
++---------------+----------+--------------+------------------+-------------------+
+1 row in set (0.00 sec)
 ```

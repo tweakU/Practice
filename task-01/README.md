@@ -126,19 +126,70 @@ drwxr-xr-x 30 root root 16384 Nov 24 13:09 wp-includes
 -rw-r--r--  1 root root  5102 Nov 24 13:09 wp-trackback.php
 -rw-r--r--  1 root root  3205 Nov 24 13:09 xmlrpc.php
 
-touch /var/www/html/wordpress/wp-config.php
-
-chmod 640 /var/www/html/wordpress/wp-config.php
-
 mkdir /var/www/html/wordpress/wp-content/uploads
 
 chown -R www-data:www-data /var/www/html/wordpress/
 
+?? chmod 640 /var/www/html/wordpress/wp-config.php
+
+ps afx
+
 root@http:/var/www/html/wordpress# mysql
 CREATE DATABASE wordpress_db;
-CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'password';
+CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'Et6zdaf0y9yfbYBmvaQR';
 GRANT ALL ON wordpress_db.* TO 'wp_user'@'localhost';
 exit
+
+cp wp-config-sample.php wp-config.php
+
+nano wp-config.php
+- 'DB_NAME' = wordpress_db
+- 'DB_USER' = wp_user
+- 'DB_PASSWORD' = Et6zdaf0y9yfbYBmvaQR
+
+root@wordpress:/var/www/html/wordpress# cd /etc/angie/
+root@wordpress:/etc/angie# ls -la
+total 60
+drwxr-xr-x   4 root root  4096 Mar  7 22:14 .
+drwxr-xr-x 113 root root  4096 Mar  7 22:15 ..
+-rw-r--r--   1 root root  1230 Feb  6 10:05 angie.conf
+-rw-r--r--   1 root root  1086 Feb  5 22:32 fastcgi.conf
+-rw-r--r--   1 root root  1016 Feb  5 22:32 fastcgi_params
+drwxr-xr-x   2 root root  4096 Mar  7 22:14 http.d
+-rw-r--r--   1 root root  5354 Feb  5 22:32 mime.types
+lrwxrwxrwx   1 root root    22 Feb  6 10:05 modules -> /usr/lib/angie/modules
+-rw-r--r--   1 root root 15908 Feb  5 22:32 prometheus_all.conf
+-rw-r--r--   1 root root   645 Feb  5 22:32 scgi_params
+drwxr-xr-x   2 root root  4096 Mar  7 22:14 stream.d
+-rw-r--r--   1 root root   673 Feb  5 22:32 uwsgi_params
+
+root@wordpress:/etc/angie# nano angie.conf
+- user = www-data
+
+root@wordpress:/etc/angie# cd http.d/
+root@wordpress:/etc/angie/http.d# ls -la
+total 12
+drwxr-xr-x 2 root root 4096 Mar  7 22:14 .
+drwxr-xr-x 4 root root 4096 Mar  7 23:13 ..
+-rw-r--r-- 1 root root 1177 Feb  6 10:05 default.conf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ```

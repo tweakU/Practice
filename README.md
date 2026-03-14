@@ -1,4 +1,4 @@
-# Landing по курсу «Administrator Linux»
+# Practice по курсу «Administrator Linux»
 
 - [Задача № 1 — «Запускам CMS Wordpress на Ubuntu 24.04 (Angie + PHP-FPM)»](task-01)
 - [Задача № 2 — «Настройка LDAP сервера»](task-03)

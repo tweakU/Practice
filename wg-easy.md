@@ -4,12 +4,7 @@
 
 [Basic Installation with Docker Compose (Recommended) - wg-easy.github.io](https://wg-easy.github.io/wg-easy/latest/examples/tutorials/basic-installation/)
 
-[Simple Installation with Docker Run - wg-easy.github.io](https://wg-easy.github.io/wg-easy/latest/examples/tutorials/docker-run/)
-
-
-
-
-
+[Simple Installation with Docker Run - wg-easy.github.io](https://wg-easy.github.io/wg-easy/latest/examples/tutorials/docker-run/)  
 
 
 To automatically install & run wg-easy, simply run:

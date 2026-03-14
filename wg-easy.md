@@ -45,17 +45,11 @@ systemctl start wg-quick@wg00.service
 ```
 
 
-
-
-
-
-
-
-
-
-Caddy
-docker-compose.yml
+## Setup Reverse Proxy
+[Caddy](https://wg-easy.github.io/wg-easy/latest/examples/tutorials/caddy/)
+docker-compose.yml:
 ```console
+---
 volumes:
   etc_wireguard:
 

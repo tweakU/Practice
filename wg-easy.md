@@ -4,9 +4,7 @@
 
 [Basic Installation with Docker Compose (Recommended) - wg-easy.github.io](https://wg-easy.github.io/wg-easy/latest/examples/tutorials/basic-installation/)
 
-[Simple Installation with Docker Run - wg-easy.github.io](https://wg-easy.github.io/wg-easy/latest/examples/tutorials/docker-run/)  
-
-  
+[Simple Installation with Docker Run - wg-easy.github.io](https://wg-easy.github.io/wg-easy/latest/examples/tutorials/docker-run/)
 
 
 To automatically install & run wg-easy, simply run:
@@ -32,7 +30,6 @@ ufw allow 51821/tcp comment 'WireGuard Web UI'
 ufw reload
 ufw status verbose
 ```
-The Web UI will now be available at http://0.0.0.0:51821.
 
 
 CLIENT SIDE:

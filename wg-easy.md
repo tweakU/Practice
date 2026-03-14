@@ -1,8 +1,16 @@
-[GitHub - wg-easy](https://github.com/wg-easy/wg-easy)
+[wg-easy@GitHub.com](https://github.com/wg-easy/wg-easy)
 
-[Docker Run - wg-easy](https://wg-easy.github.io/wg-easy/latest/examples/tutorials/docker-run/)
+[Using WireGuard Easy with nginx SSL - wg-easy@GitHub.com](https://github.com/wg-easy/wg-easy/wiki/Using-WireGuard-Easy-with-nginx-SSL)
 
-[Using WireGuard Easy with nginx SSL](https://github.com/wg-easy/wg-easy/wiki/Using-WireGuard-Easy-with-nginx-SSL)
+[Basic Installation with Docker Compose (Recommended) - wg-easy.github.io](https://wg-easy.github.io/wg-easy/latest/examples/tutorials/basic-installation/)
+
+[Simple Installation with Docker Run - wg-easy.github.io](https://wg-easy.github.io/wg-easy/latest/examples/tutorials/docker-run/)
+
+
+
+
+
+
 
 To automatically install & run wg-easy, simply run:
 ```console

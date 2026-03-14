@@ -68,7 +68,7 @@ services:
     networks:
       caddy:
         ipv4_address: 172.18.0.10 # IP-адрес из подсети Caddy brigde
-#        ipv6_address: fdcc:ad94:bacf:61a3::2a
+#        ipv6_address: 
     volumes:
       - etc_wireguard:/etc/wireguard
       - /lib/modules:/lib/modules:ro
@@ -89,27 +89,10 @@ networks:
   caddy:
     external: true
     driver: bridge
-    enable_ipv6: false
+#    enable_ipv6: true
     ipam:
       driver: default
       config:
         - subnet: 172.18.0.0/16
-#        - subnet: fdcc:ad94:bacf:61a3::/64
+#        - subnet: 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,4 +1,4 @@
-[GitHub - wg-easy](https://github.com/wg-easy/wg-easy?tab=readme-ov-file)
+[GitHub - wg-easy](https://github.com/wg-easy/wg-easy)
 
 [Docker Run - wg-easy](https://wg-easy.github.io/wg-easy/latest/examples/tutorials/docker-run/)
 

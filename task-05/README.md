@@ -301,10 +301,50 @@ Slave_Non_Transactional_Groups: 0
 
 Настройка репликации на mysql01 посредством GTID
 ```console
+MariaDB [(none)]> STOP SLAVE;
+Query OK, 0 rows affected (0.003 sec)
 
+MariaDB [(none)]> SHOW VARIABLES LIKE '%gtid%';
++-------------------------+-------------+
+| Variable_name           | Value       |
++-------------------------+-------------+
+| gtid_binlog_pos         | 0-2-4       |
+| gtid_binlog_state       | 0-1-2,0-2-4 |
+| gtid_cleanup_batch_size | 64          |
+| gtid_current_pos        | 0-2-4       |
+| gtid_domain_id          | 0           |
+| gtid_ignore_duplicates  | OFF         |
+| gtid_pos_auto_engines   |             |
+| gtid_seq_no             | 0           |
+| gtid_slave_pos          | 0-2-4       |
+| gtid_strict_mode        | OFF         |
+| last_gtid               | 0-1-2       |
+| wsrep_gtid_domain_id    | 0           |
+| wsrep_gtid_mode         | OFF         |
+| wsrep_gtid_seq_no       | 0           |
++-------------------------+-------------+
+14 rows in set (0.001 sec)
+
+MariaDB [(none)]> RESET SLAVE;
+Query OK, 0 rows affected, 1 warning (0.005 sec)
+
+MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.21.172', MASTER_USER='slave', MASTER_PASSWORD='s0SaNfR63zi3g7rvlbNE';
+Query OK, 0 rows affected (0.015 sec)
+
+Mar
 ```
 
+```console
+MariaDB [(none)]> STOP SLAVE;
+Query OK, 0 rows affected (0.008 sec)
 
+MariaDB [(none)]> RESET SLAVE;
+Query OK, 0 rows affected, 1 warning (0.005 sec)
+
+MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.21.171', MASTER_USER='slave', MASTER_PASSWORD='s0SaNfR63zi3g7rvlbNE';
+Query OK, 0 rows affected (0.015 sec)
+
+```
 
 
 

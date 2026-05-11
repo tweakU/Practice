@@ -572,10 +572,11 @@ MariaDB [(none)]> SHOW DATABASES;
 4 rows in set (0.000 sec)
 ```
 
-# метод репликации Master-Master предоставляет возможность быстрой перенастройки репликации с одной ноды на другую; для этого:
+** метод репликации Master-Master предоставляет возможность быстрой перенастройки репликации с одной ноды на другую; для этого:**
 ```console
 MariaDB [(none)]> STOP SLAVE;
 MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.XXX.XXX', MASTER_USER='slave', MASTER_PASSWORD='s0SaNfR63zi3g7rvlbNE';
+MariaDB [(none)]> START SLAVE;
 ```
 
 

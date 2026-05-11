@@ -8,12 +8,12 @@
 
 **Выполнение задания**:
 
-1) :
+1) Настройка репликации на mysql01, mysql02:
 
 ```console
 root@vm-mysql01:~# mysql
 
-MariaDB [(none)]> SELECT user,host FROM mysql.user;
+MariaDB [(none)]> SELECT user, host FROM mysql.user;
 +-------------+-----------+
 | User        | Host      |
 +-------------+-----------+

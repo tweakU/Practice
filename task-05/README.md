@@ -4,7 +4,7 @@
 [MySQL master-master репликация, keepalived](https://docs.google.com/presentation/d/1fNKB4QXbhmnweuIKdX3LCHnE00FFm_JFoTya-4N-6wk)
 
 **Цель задания: **.  
-1. Репликая Master-Master
+1. Репликая Master-Master (aka Master-Slave в обе стороны)
 
 **Выполнение задания**:
 

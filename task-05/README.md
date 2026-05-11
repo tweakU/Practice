@@ -175,7 +175,7 @@ Slave_Non_Transactional_Groups: 0
 ```
 
 Настройка репликации на mysql01
-```
+```console
 MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.21.172', MASTER_USER='slave', MASTER_PASSWORD='s0SaNfR63zi3g7rvlbNE', MASTER_LOG_FILE = 'mysql-bin.000001', MASTER_LOG_POS = 328;
 Query OK, 0 rows affected, 1 warning (0.009 sec)
 

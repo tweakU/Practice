@@ -50,8 +50,7 @@ MariaDB [(none)]> SHOW GRANTS FOR 'slave'@'%';
 ```console
 root@vm-mysql02:~# mysql
 
-MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.21.171', MASTER_USER='slave', MASTER_PASSWORD='s0SaNfR63zi3g7rvlbNE', MASTER_LOG_FILE = 'mysql
--bin.000001', MASTER_LOG_POS = 328;
+MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.21.171', MASTER_USER='slave', MASTER_PASSWORD='s0SaNfR63zi3g7rvlbNE', MASTER_LOG_FILE = 'mysql-bin.000001', MASTER_LOG_POS = 328;
 Query OK, 0 rows affected, 1 warning (0.012 sec)
 
 MariaDB [(none)]> SHOW SLAVE STATUS \G

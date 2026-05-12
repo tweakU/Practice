@@ -584,8 +584,17 @@ MariaDB [(none)]> START SLAVE;
 MariaDB [(none)]> SELECT BINLOG_GTID_POS('mysql-bin.000001', 659);
 ```
 
-1
+Настройка keepalived
 
+Настроить конфиг:
+```console
+root@vm-mysql01:~# nano keepalived.conf
+```
+
+Добавить пользователя:
+```console
+root@vm-mysql01:~# useradd --system --no-create-home --shell /usr/sbin/nologin keepalived_script
+```
 
 
 

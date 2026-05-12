@@ -584,9 +584,9 @@ MariaDB [(none)]> START SLAVE;
 MariaDB [(none)]> SELECT BINLOG_GTID_POS('mysql-bin.000001', 659);
 ```
 
-Настройка keepalived
+**3) Настройка keepalived**
 
-Настроить keepalived.conf:
+3.1) Настроить keepalived.conf:
 ```console
 vrrp_script check_mysql {
     script "nc -z localhost 3306" # cheaper than pidof
@@ -612,7 +612,7 @@ vrrp_instance db {
 }
 ```
 
-Добавить пользователя:
+3.2) Добавить пользователя:
 ```console
 root@vm-mysql01:~# useradd --system --no-create-home --shell /usr/sbin/nologin keepalived_script
 ```

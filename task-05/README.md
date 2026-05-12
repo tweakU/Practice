@@ -46,7 +46,7 @@ MariaDB [(none)]> SHOW GRANTS FOR 'slave'@'%';
 1 row in set (0.000 sec)
 ```
 
-Настройка репликации на mysql02
+1.2) Настройка репликации на mysql02
 ```console
 root@vm-mysql02:~# mysql
 
@@ -173,7 +173,7 @@ Slave_Non_Transactional_Groups: 0
 1 row in set (0.000 sec)
 ```
 
-Настройка репликации на mysql01
+1.3) Настройка репликации на mysql01
 ```console
 MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.1.122', MASTER_USER='slave', MASTER_PASSWORD='s0SaNfR63zi3g7rvlbNE', MASTER_LOG_FILE = 'mysql-bin.000001', MASTER_LOG_POS = 328;
 Query OK, 0 rows affected, 1 warning (0.009 sec)
@@ -298,7 +298,7 @@ Slave_Non_Transactional_Groups: 0
 1 row in set (0.000 sec)
 ```
 
-Настройка репликации на mysql02 посредством GTID
+2) Настройка репликации на mysql02 посредством GTID
 ```console
 MariaDB [(none)]> STOP SLAVE;
 Query OK, 0 rows affected (0.003 sec)
@@ -418,7 +418,7 @@ Slave_Non_Transactional_Groups: 0
 1 row in set (0.000 sec)
 ```
 
-Настройка репликации на mysql01 посредством GTID
+2.1) Настройка репликации на mysql01 посредством GTID
 ```console
 MariaDB [(none)]> STOP SLAVE;
 Query OK, 0 rows affected (0.008 sec)
@@ -515,7 +515,7 @@ Slave_Non_Transactional_Groups: 0
 1 row in set (0.000 sec)
 ```
 
-Проверим работоспособность
+2.2) Проверим работоспособность
 ```console
 # mysql01
 MariaDB [(none)]> SHOW DATABASES;
@@ -617,7 +617,7 @@ vrrp_instance db {
 root@vm-mysql01:~# useradd --system --no-create-home --shell /usr/sbin/nologin keepalived_script
 ```
 
-
+3.3) 
 
 
 

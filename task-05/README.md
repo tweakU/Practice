@@ -8,7 +8,7 @@
 
 **Выполнение задания**:
 
-1) Настройка репликации на mysql01, mysql02:
+Настройка репликации на mysql01, mysql02:
 
 ```console
 root@vm-mysql01:~# mysql
@@ -46,7 +46,7 @@ MariaDB [(none)]> SHOW GRANTS FOR 'slave'@'%';
 1 row in set (0.000 sec)
 ```
 
-1.2) Настройка репликации на mysql02
+Настройка репликации на mysql02
 ```console
 root@vm-mysql02:~# mysql
 
@@ -173,7 +173,7 @@ Slave_Non_Transactional_Groups: 0
 1 row in set (0.000 sec)
 ```
 
-1.3) Настройка репликации на mysql01
+Настройка репликации на mysql01
 ```console
 MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.1.122', MASTER_USER='slave', MASTER_PASSWORD='s0SaNfR63zi3g7rvlbNE', MASTER_LOG_FILE = 'mysql-bin.000001', MASTER_LOG_POS = 328;
 Query OK, 0 rows affected, 1 warning (0.009 sec)
@@ -298,7 +298,7 @@ Slave_Non_Transactional_Groups: 0
 1 row in set (0.000 sec)
 ```
 
-2) Настройка репликации на mysql02 посредством GTID
+Настройка репликации на mysql02 посредством GTID
 ```console
 MariaDB [(none)]> STOP SLAVE;
 Query OK, 0 rows affected (0.003 sec)
@@ -418,7 +418,7 @@ Slave_Non_Transactional_Groups: 0
 1 row in set (0.000 sec)
 ```
 
-2.1) Настройка репликации на mysql01 посредством GTID
+Настройка репликации на mysql01 посредством GTID
 ```console
 MariaDB [(none)]> STOP SLAVE;
 Query OK, 0 rows affected (0.008 sec)
@@ -515,7 +515,7 @@ Slave_Non_Transactional_Groups: 0
 1 row in set (0.000 sec)
 ```
 
-2.2) Проверим работоспособность
+Проверка работоспособности:
 ```console
 # mysql01
 MariaDB [(none)]> SHOW DATABASES;
@@ -584,9 +584,9 @@ MariaDB [(none)]> START SLAVE;
 MariaDB [(none)]> SELECT BINLOG_GTID_POS('mysql-bin.000001', 659);
 ```
 
-**3) Настройка keepalived**
+**Настройка keepalived**
 
-3.1) Настроить keepalived.conf:
+Настройка keepalived.conf:
 ```console
 vrrp_script check_mysql {
     script "nc -z localhost 3306" # cheaper than pidof
@@ -612,14 +612,127 @@ vrrp_instance db {
 }
 ```
 
-3.2) Добавить пользователя:
+Добавление пользователя:
 ```console
 root@vm-mysql01:~# useradd --system --no-create-home --shell /usr/sbin/nologin keepalived_script
 ```
 
-3.3) 
+Проверка работоспособности:
+```console
+root@vm-mysql01:~# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:a8:f0:f6 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.21.91/24 brd 192.168.21.255 scope global enp0s3
+       valid_lft forever preferred_lft forever
 
+root@vm-mysql01:~# systemctl start keepalived.service
 
+root@vm-mysql01:~# systemctl status keepalived.service
+● keepalived.service - Keepalive Daemon (LVS and VRRP)
+     Loaded: loaded (/usr/lib/systemd/system/keepalived.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-05-12 18:55:12 MSK; 4s ago
+       Docs: man:keepalived(8)
+             man:keepalived.conf(5)
+             man:genhash(1)
+             https://keepalived.org
+   Main PID: 5521 (keepalived)
+      Tasks: 2 (limit: 1033)
+     Memory: 1.8M (peak: 2.3M)
+        CPU: 15ms
+     CGroup: /system.slice/keepalived.service
+             ├─5521 /usr/sbin/keepalived --dont-fork
+             └─5522 /usr/sbin/keepalived --dont-fork
+
+May 12 18:55:12 vm-mysql01 Keepalived[5521]: Command line: '/usr/sbin/keepalived' '--dont-fork'
+May 12 18:55:12 vm-mysql01 Keepalived[5521]: Configuration file /etc/keepalived/keepalived.conf
+May 12 18:55:12 vm-mysql01 Keepalived[5521]: NOTICE: setting config option max_auto_priority should result in better keepalived performance
+May 12 18:55:12 vm-mysql01 Keepalived[5521]: Starting VRRP child process, pid=5522
+May 12 18:55:12 vm-mysql01 Keepalived_vrrp[5522]: SECURITY VIOLATION - scripts are being executed but script_security not enabled.
+May 12 18:55:12 vm-mysql01 Keepalived[5521]: Startup complete
+May 12 18:55:12 vm-mysql01 systemd[1]: Started keepalived.service - Keepalive Daemon (LVS and VRRP).
+May 12 18:55:12 vm-mysql01 Keepalived_vrrp[5522]: VRRP_Script(check_mysql) succeeded
+May 12 18:55:12 vm-mysql01 Keepalived_vrrp[5522]: (db) Entering BACKUP STATE
+May 12 18:55:15 vm-mysql01 Keepalived_vrrp[5522]: (db) Entering MASTER STATE
+
+root@vm-mysql01:~# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:a8:f0:f6 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.21.91/24 brd 192.168.21.255 scope global enp0s3
+       valid_lft forever preferred_lft forever
+    inet 192.168.21.93/24 scope global secondary enp0s3
+       valid_lft forever preferred_lft forever
+
+root@vm-mysql02:~# systemctl start keepalived.service
+
+root@vm-mysql02:~# systemctl status keepalived.service
+● keepalived.service - Keepalive Daemon (LVS and VRRP)
+     Loaded: loaded (/usr/lib/systemd/system/keepalived.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-05-12 19:05:23 MSK; 2s ago
+       Docs: man:keepalived(8)
+             man:keepalived.conf(5)
+             man:genhash(1)
+             https://keepalived.org
+   Main PID: 5324 (keepalived)
+      Tasks: 2 (limit: 1033)
+     Memory: 1.8M (peak: 2.3M)
+        CPU: 10ms
+     CGroup: /system.slice/keepalived.service
+             ├─5324 /usr/sbin/keepalived --dont-fork
+             └─5325 /usr/sbin/keepalived --dont-fork
+
+May 12 19:05:23 vm-mysql02 Keepalived[5324]: Running on Linux 6.8.0-111-generic #111-Ubuntu SMP PREEMPT_DYNAMIC Sat Apr 11 23:16:02 UTC 2026 (built f>
+May 12 19:05:23 vm-mysql02 Keepalived[5324]: Command line: '/usr/sbin/keepalived' '--dont-fork'
+May 12 19:05:23 vm-mysql02 Keepalived[5324]: Configuration file /etc/keepalived/keepalived.conf
+May 12 19:05:23 vm-mysql02 Keepalived[5324]: NOTICE: setting config option max_auto_priority should result in better keepalived performance
+May 12 19:05:23 vm-mysql02 Keepalived[5324]: Starting VRRP child process, pid=5325
+May 12 19:05:23 vm-mysql02 Keepalived_vrrp[5325]: SECURITY VIOLATION - scripts are being executed but script_security not enabled.
+May 12 19:05:23 vm-mysql02 Keepalived[5324]: Startup complete
+May 12 19:05:23 vm-mysql02 systemd[1]: Started keepalived.service - Keepalive Daemon (LVS and VRRP).
+May 12 19:05:23 vm-mysql02 Keepalived_vrrp[5325]: VRRP_Script(check_mysql) succeeded
+May 12 19:05:23 vm-mysql02 Keepalived_vrrp[5325]: (db) Entering BACKUP STATE
+
+root@vm-mysql02:~# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:00:a9:b9 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.21.92/24 brd 192.168.21.255 scope global enp0s3
+       valid_lft forever preferred_lft forever
+
+root@vm-mysql01:~# systemctl stop mariadb.service
+
+root@vm-mysql01:~# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:a8:f0:f6 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.21.91/24 brd 192.168.21.255 scope global enp0s3
+       valid_lft forever preferred_lft forever
+
+root@vm-mysql02:~# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:00:a9:b9 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.21.92/24 brd 192.168.21.255 scope global enp0s3
+       valid_lft forever preferred_lft forever
+    inet 192.168.21.93/24 scope global secondary enp0s3
+       valid_lft forever preferred_lft forever
+```
 
 
 

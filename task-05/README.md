@@ -5,6 +5,7 @@
 
 **Цель задания: **.  
 1. Репликая Master-Master (aka Master-Slave в обе стороны)
+2. ДОПИСАТЬ ЦЕЛИ
 
 **Выполнение задания**:
 
@@ -572,17 +573,21 @@ MariaDB [(none)]> SHOW DATABASES;
 4 rows in set (0.000 sec)
 ```
 
-**Метод репликации Master-Master предоставляет возможность быстрой перенастройки репликации с одной ноды на другую; для этого:**
+**!! Метод репликации Master-Master предоставляет возможность быстрой перенастройки репликации с одной ноды на другую; для этого:**
 ```console
 MariaDB [(none)]> STOP SLAVE;
 MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.XXX.XXX', MASTER_USER='slave', MASTER_PASSWORD='s0SaNfR63zi3g7rvlbNE';
 MariaDB [(none)]> START SLAVE;
 ```
 
-**Как выяснить GTID на основании binlog`а и его позиции**
+**!! Как выяснить GTID на основании binlog`а и его позиции**
 ```console
 MariaDB [(none)]> SELECT BINLOG_GTID_POS('mysql-bin.000001', 659);
 ```
+
+
+**!! ПРОСЛУШАТЬ С 01:06:00 ПО х3 **
+
 
 **Настройка keepalived**
 

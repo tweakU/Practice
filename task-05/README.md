@@ -586,9 +586,30 @@ MariaDB [(none)]> SELECT BINLOG_GTID_POS('mysql-bin.000001', 659);
 
 Настройка keepalived
 
-Настроить конфиг:
+Настроить keepalived.conf:
 ```console
-root@vm-mysql01:~# nano keepalived.conf
+vrrp_script check_mysql {
+    script "nc -z localhost 3306" # cheaper than pidof
+    interval 2                    # check every 2 seconds
+    fall 1
+    rise 2
+}
+
+vrrp_instance db {
+    state MASTER
+    interface enp1s0
+    virtual_router_id 11
+    priority 200
+    advert_int 1
+
+    preempt_delay 0
+    virtual_ipaddress {
+        192.168.21.93/24        
+    }
+    track_script {
+        check_mysql
+    }
+}
 ```
 
 Добавить пользователя:

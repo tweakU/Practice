@@ -579,10 +579,12 @@ MariaDB [(none)]> CHANGE MASTER TO MASTER_HOST='192.168.XXX.XXX', MASTER_USER='s
 MariaDB [(none)]> START SLAVE;
 ```
 
-1:06:57
+**Как выяснить GTID на основании binlog`а и его позиции**
+```console
+MariaDB [(none)]> SELECT BINLOG_GTID_POS('mysql-bin.000001', 659);
+```
 
-
-
+1
 
 
 

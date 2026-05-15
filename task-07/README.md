@@ -1,7 +1,7 @@
 ## «Galera Cluster» ##
 
-[Видеоматериалы | REBRAIN | Galera Cluster](https://my.rebrainme.com/video/1369?course=podpiska-linux)  
-[Презентация | Galera cluster, multi-master репликация, keepalived](https://docs.google.com/presentation/d/1iqxU3TdskinoDxaTbLBdw8-NJC0zxAo_ixKgiX6asdk/edit?slide=id.p#slide=id.p)
+[Видеоматериалы | REBRAIN | MySQL мульти-мастер](https://my.rebrainme.com/video/1611?course=podpiska-linux)  
+[Презентация | ???](https://docs.google.com/presentation/d//edit?slide=id.p#slide=id.p)
 
 **Цель задания: **.  
 1. Репликая Master-Master (aka Master-Slave в обе стороны)

@@ -6,7 +6,7 @@
 - [Задача № 4 — «MySQL Репликация» (REBRAIN)](task-02)
 - [Задача № 5 — «Отказоустойчивый кластер MySQL» (master-master репликация, keepalived) (REBRAIN)](task-05)
 - [Задача № 6 — «»](task-06)
-- [Задача № 7 — «»](task-07)
+- [Задача № 7 — «Galera Cluster» (REBRAIN)](task-07)
 - [Задача № 8 — «»](task-08)
 - [Задача № 9 — «»](task-09)
 - [Задача № 10 — «»](task-10)

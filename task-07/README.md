@@ -1,4 +1,4 @@
-## «Galera Cluster» ##
+## «MySQL мульти-мастер» ##
 
 [Видеоматериалы | REBRAIN | MySQL мульти-мастер](https://my.rebrainme.com/video/1611?course=podpiska-linux)  
 [Презентация | ???](https://docs.google.com/presentation/d//edit?slide=id.p#slide=id.p)

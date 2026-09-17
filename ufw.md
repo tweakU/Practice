@@ -7,4 +7,4 @@ ufw allow 51820/udp comment 'Allow incoming WireGuard'
 ufw status numbered
 ufw delete <>
 ufw reload
-```console
+```

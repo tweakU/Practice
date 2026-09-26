@@ -1,16 +1,19 @@
-# Архитектура Home Lab на Proxmox — Best Practices
+Ниже — объединённая Markdown-версия **первой части диалога** (архитектура Proxmox/Docker/NPM) и **последней части** (OMV/NFS/storage). Её можно целиком сохранить как, например, `homelab-architecture.md`.
 
- ## Исходные данные
+````
+# Home Lab: Proxmox + Docker + OMV + Nginx Proxy Manager
 
- - Home Lab Server:
-  - **Intel Xeon E3-1265L v2**
-  - **32 GB RAM**
-  - **NVMe SSD** для VM/LXC
-- Установлен **Proxmox VE**
-- Есть VM:
-  - **OpenMediaVault (OMV)**
+## Исходные данные
+
+- Home Lab Server:
+  - Intel Xeon E3-1265L v2
+  - 32 GB RAM
+  - NVMe SSD для VM/LXC
+- Установлен Proxmox VE
+- В отдельной VM работает:
+  - OpenMediaVault 7.7.24-7
   - 1 CPU / 1 GB RAM
-- Роутер провайдера имеет **Public IPv4**
+- Роутер провайдера имеет Public IPv4
 - Планируемые сервисы:
   - Nginx Proxy Manager
   - Plex
@@ -22,17 +25,16 @@
 
 ---
 
- # 1\. Рекомендуемая архитектура
+# 1. Общая архитектура
 
- Для данного Home Lab оптимально использовать:
+Для данного Home Lab оптимальная схема:
 
- > **Proxmox → VM → Docker → Docker Compose → приложения**
+> Proxmox → VM → Docker → Docker Compose → приложения
 
- А не создавать отдельную VM или LXC для каждого сервиса.
+Не стоит создавать отдельную VM/LXC для каждого сервиса.
 
- Базовая архитектура:
+Базовая архитектура:
 
-```
                          INTERNET
                             │
                     Public IPv4 on router
@@ -49,12 +51,9 @@
               │            │             │
               ▼            ▼             ▼
           services      services       services
-          VM/LXC        VM/LXC         VM/LXC
-```
 
- Для начала лучше сделать проще:
+Для начала лучше сделать:
 
-```
 Proxmox
 │
 ├── VM 100  Home Assistant OS
@@ -67,27 +66,20 @@ Proxmox
 │   ├── Paperless-ngx
 │   └── Nextcloud
 │
-└── OMV
-```
+└── VM 120  OpenMediaVault
+    └── Storage
 
 ---
 
- # 2\. VM vs LXC vs Docker
+# 2. VM vs LXC vs Docker
 
- ## Важное различие
+Нужно разделять два уровня:
 
- Нужно разделять два уровня:
+- VM/LXC — изоляция на уровне Proxmox.
+- Docker container — изоляция приложений внутри Linux.
 
- - **VM/LXC** — виртуализация/изоляция на уровне Proxmox.
-- **Docker container** — контейнеризация приложений внутри Linux.
+Поэтому хороший вариант:
 
- Поэтому не обязательно выбирать только:
-
- > LXC **или** Docker.
-
- Хорошая архитектура:
-
-```
 Proxmox
    │
    └── VM: docker-host
@@ -101,42 +93,37 @@ Proxmox
                     ├── Plex
                     ├── Paperless
                     └── Nextcloud
-```
 
 ---
 
- # 3\. Почему Docker лучше разместить внутри VM
+# 3. Почему Docker лучше разместить внутри VM
 
- Рекомендуемый вариант:
+Рекомендуемый вариант:
 
-```
 Proxmox
    │
    └── Debian VM
           │
           └── Docker
-```
 
- Преимущества:
+Преимущества:
 
- - Docker изолирован от Proxmox host.
+- Docker изолирован от Proxmox host.
 - Можно делать backup всей VM.
 - Можно делать snapshot.
 - Docker можно обновлять независимо от Proxmox.
 - Debian можно обслуживать независимо от Proxmox.
 - VM легко перенести на другой сервер.
 - Docker Compose позволяет описывать инфраструктуру декларативно.
-- При проблеме с Docker сам Proxmox остаётся независимым.
 
- Это особенно важно с точки зрения безопасности: Docker daemon имеет значительные привилегии, поэтому отдельная VM даёт дополнительный уровень изоляции.
+Для Home Lab это хороший баланс между изоляцией и простотой.
 
 ---
 
- # 4\. Почему не VM на каждый сервис
+# 4. Почему не VM на каждый сервис
 
- Технически можно сделать:
+Технически можно сделать:
 
-```
 VM 101 NPM
 VM 102 Plex
 VM 103 Sonarr
@@ -144,13 +131,12 @@ VM 104 Jellyfin
 VM 105 Paperless
 VM 106 Nextcloud
 VM 107 Home Assistant
-```
 
- Но для данного сервера это избыточно.
+Но для данного сервера это избыточно.
 
- Появляется:
+Появляется:
 
- - больше RAM overhead;
+- больше RAM overhead;
 - больше ОС;
 - больше обновлений;
 - больше backup jobs;
@@ -160,15 +146,12 @@ VM 107 Home Assistant
 - больше monitoring;
 - больше точек администрирования.
 
- Для большинства этих приложений Docker предоставляет достаточную изоляцию.
-
 ---
 
- # 5\. Почему не LXC на каждый сервис
+# 5. Почему не LXC на каждый сервис
 
- Можно сделать:
+Можно сделать:
 
-```
 Proxmox
 ├── LXC 101 NPM
 ├── LXC 102 Sonarr
@@ -177,71 +160,45 @@ Proxmox
 ├── LXC 105 Paperless
 ├── LXC 106 Nextcloud
 └── VM 107 Home Assistant
-```
 
- Это экономично по RAM.
+Это экономично по RAM.
 
- Но появляется дополнительная административная сложность.
+Но появляется дополнительная административная сложность.
 
- Вместо:
-
-```
-Docker Compose
-```
-
- получается управление большим количеством LXC:
-
- - обновление контейнеров;
-- backup;
-- network configuration;
-- mounts;
-- permissions;
-- firewall;
-- lifecycle management.
-
- Для данного Home Lab Docker Compose будет удобнее.
+Для данного Home Lab Docker Compose будет удобнее.
 
 ---
 
- # 6\. Docker Host
+# 6. Docker Host
 
- Начальная конфигурация:
+Начальная конфигурация:
 
-```
 VM 110
 Debian
 Docker
 Docker Compose
-```
 
- Например:
+Например:
 
-```
-4 vCPU
-8 GB RAM
-```
+- 4 vCPU
+- 8 GB RAM
 
- При необходимости RAM можно увеличить:
+При необходимости RAM можно увеличить:
 
-```
 8 GB
-   ↓
+  ↓
 12 GB
-   ↓
+  ↓
 16 GB
-```
 
- Нет необходимости сразу выделять Docker VM 16 GB.
+Нет необходимости сразу выделять Docker VM 16 GB.
 
 ---
 
- # 7\. Можно ли разделить Docker Hosts?
+# 7. Возможное дальнейшее разделение Docker Hosts
 
- Да.
+В дальнейшем можно сделать:
 
- В дальнейшем можно сделать:
-
-```
 Proxmox
 │
 ├── VM 100
@@ -258,21 +215,15 @@ Proxmox
         ├── Plex
         ├── Jellyfin
         └── Sonarr
-```
 
- Это даст дополнительную изоляцию.
-
- Однако для первого этапа это не обязательно.
-
- Лучше начать с одной Docker VM, а затем разделить инфраструктуру, когда появится необходимость.
+Но на первом этапе лучше начать с одной Docker VM.
 
 ---
 
- # 8\. Nginx Proxy Manager
+# 8. Nginx Proxy Manager
 
- Nginx Proxy Manager лучше разместить внутри Docker Host:
+Nginx Proxy Manager размещается внутри Docker Host:
 
-```
 Docker Host
 │
 ├── Nginx Proxy Manager
@@ -281,13 +232,11 @@ Docker Host
 ├── Sonarr
 ├── Jellyfin
 └── Plex
-```
 
- NPM будет единственной точкой HTTP/HTTPS входа из Internet.
+NPM становится единственной точкой HTTP/HTTPS входа из Internet.
 
- Схема:
+Схема:
 
-```
 Internet
     │
     ▼
@@ -305,45 +254,35 @@ Router
           ┌────────────┼────────────┐
           ▼            ▼            ▼
       Nextcloud    Paperless     Sonarr
-```
 
 ---
 
- # 9\. Какие порты публиковать наружу
+# 9. Какие порты публиковать наружу
 
- Из Internet:
+Из Internet:
 
-```
 TCP 80  → Nginx Proxy Manager
 TCP 443 → Nginx Proxy Manager
-```
 
- Не следует публиковать наружу:
+Не следует публиковать наружу:
 
-```
-NPM :81
-Sonarr :8989
-Jellyfin :8096
-Plex :32400
-Paperless :8000
-Home Assistant :8123
-```
+- NPM :81
+- Sonarr :8989
+- Jellyfin :8096
+- Plex :32400
+- Paperless :8000
+- Home Assistant :8123
 
- Административный интерфейс NPM:
+Административный интерфейс NPM:
 
-```
 http://NPM-IP:81
-```
 
- должен быть доступен только из LAN или VPN.
+должен быть доступен только из LAN или VPN.
 
 ---
 
- # 10\. NPM как единственная HTTP/HTTPS точка входа
+# 10. NPM как единственная HTTP/HTTPS точка входа
 
- Рекомендуемая схема:
-
-```
                          INTERNET
                             │
                        Public IPv4
@@ -362,11 +301,9 @@ http://NPM-IP:81
           ┌─────────────────┼────────────────┐
           ▼                 ▼                ▼
       Nextcloud         Paperless          Sonarr
-```
 
- Например:
+Например:
 
-```
 https://cloud.example.com
             │
             ▼
@@ -374,64 +311,49 @@ https://cloud.example.com
             │
             ▼
        nextcloud:80
-```
-
- и:
-
-```
-https://paperless.example.com
-            │
-            ▼
-      Nginx Proxy Manager
-            │
-            ▼
-       paperless:8000
-```
 
 ---
 
- # 11\. NPM: SQLite, MySQL/MariaDB или PostgreSQL?
+# 11. NPM: SQLite, MySQL/MariaDB или PostgreSQL?
 
- Для Nginx Proxy Manager доступны:
+Для Nginx Proxy Manager доступны:
 
- - SQLite
+- SQLite
 - MySQL
 - MariaDB
 
- Для небольшого Home Lab:
+Для небольшого Home Lab:
 
- > **SQLite — рекомендуемый вариант.**
+> SQLite — рекомендуемый вариант.
 
- NPM не является database-heavy application.
+NPM не является database-heavy application.
 
- В базе хранятся:
+В базе хранятся:
 
- - Proxy Hosts
+- Proxy Hosts
 - Users
 - Access Lists
 - Certificates
 - Settings
 - Streams
-- и другие настройки NPM.
+- другие настройки NPM
 
- Для обычного Home Lab этого более чем достаточно.
+Для обычного Home Lab этого более чем достаточно.
 
 ---
 
- # 12\. SQLite для NPM
+# 12. SQLite для NPM
 
- Схема:
+Схема:
 
-```
 Nginx Proxy Manager
         │
         ▼
 database.sqlite
-```
 
- Плюсы:
+Плюсы:
 
- - минимум компонентов;
+- минимум компонентов;
 - минимум RAM;
 - не нужен отдельный DB server;
 - простой backup;
@@ -439,81 +361,62 @@ database.sqlite
 - меньше обслуживания;
 - отлично подходит для небольшого количества Proxy Hosts.
 
- Для данного Home Lab:
+Для данного Home Lab:
 
- > **SQLite — самый простой и практичный выбор.**
+> SQLite — самый простой и практичный выбор.
 
 ---
 
- # 13\. MariaDB/MySQL для NPM
+# 13. MariaDB/MySQL для NPM
 
- Альтернативный вариант:
+Альтернативный вариант:
 
-```
 NPM
  │
  ▼
 MariaDB
-```
 
- Это имеет смысл, если хочется использовать отдельную DB infrastructure.
+Это имеет смысл, если хочется использовать отдельную DB infrastructure.
 
- Но появляется дополнительный компонент:
+Но появляются дополнительные компоненты:
 
-```
-NPM
- +
-MariaDB
- +
-DB credentials
- +
-DB backup
- +
-DB updates
- +
-DB monitoring
-```
+- MariaDB
+- DB credentials
+- DB backup
+- DB updates
+- DB monitoring
 
- Если MariaDB нужна только NPM, практического преимущества для небольшого Home Lab немного.
+Если MariaDB нужна только NPM, практического преимущества для небольшого Home Lab немного.
 
 ---
 
- # 14\. PostgreSQL для NPM
+# 14. PostgreSQL для NPM
 
- Для NPM PostgreSQL я бы специально не выбирал.
+Для NPM PostgreSQL специально выбирать не стоит.
 
- Для Home Lab:
+Для Home Lab логичнее:
 
-```
 NPM → SQLite
-```
 
- или:
+или:
 
-```
 NPM → MariaDB
-```
 
- гораздо логичнее.
-
- PostgreSQL имеет смысл использовать для других приложений, которым он действительно нужен.
+PostgreSQL лучше использовать для приложений, которым он действительно нужен.
 
 ---
 
- # 15\. Paperless-ngx
+# 15. Paperless-ngx
 
- Для Paperless-ngx лучше:
+Для Paperless-ngx:
 
-```
 Paperless
    │
    ├── PostgreSQL
    └── Redis/Valkey
-```
 
- То есть:
+Например:
 
-```
 Docker Compose
 │
 ├── paperless-web
@@ -521,345 +424,165 @@ Docker Compose
 ├── paperless-scheduler
 ├── postgres
 └── redis/valkey
-```
-
- Для новой установки Paperless-ngx PostgreSQL является предпочтительным вариантом.
 
 ---
 
- # 16\. Nextcloud
+# 16. Nextcloud
 
- Для Nextcloud также лучше не использовать SQLite как основную БД.
+Для Nextcloud также лучше не использовать SQLite как основную БД.
 
- Рекомендуемая архитектура:
+Рекомендуемая архитектура:
 
-```
 Nextcloud
    │
    └── PostgreSQL
-```
 
- При этом нужно разделять:
+При этом нужно разделять:
 
-```
 PostgreSQL
    │
    └── application metadata
-```
 
- и:
+и:
 
-```
 Filesystem
    │
    └── actual user files
-```
-
- Это важно для backup strategy.
 
 ---
 
- # 17\. Plex + Jellyfin
+# 17. Plex + Jellyfin
 
- Plex и Jellyfin можно спокойно разместить в одной Docker VM:
+Plex и Jellyfin можно разместить в одной Docker VM:
 
-```
 Docker Host
 │
 ├── Plex
 └── Jellyfin
-```
 
- Оба используют одну media library:
+Оба используют одну media library:
 
-```
 /media
 ├── movies
 ├── tv
 └── music
-```
 
- При этом необходимо учитывать transcoding.
+Главное ограничение на данном сервере может быть не RAM, а transcoding.
 
- Для вашего:
-
-```
-Xeon E3-1265L v2
-32 GB RAM
-```
-
- главным ограничением может оказаться не RAM, а transcoding.
-
- Если Plex и Jellyfin будут одновременно транскодировать видео, нужно отдельно проверить возможности iGPU и организовать доступ к нему из Docker.
+Если Plex и Jellyfin будут одновременно транскодировать видео, нужно отдельно проверить возможности iGPU и организовать доступ к нему из Docker.
 
 ---
 
- # 18\. Sonarr + media storage
+# 18. Sonarr + media storage
 
- Sonarr:
+Sonarr:
 
-```
 Sonarr
 │
 ├── /tv
 └── /downloads
-```
 
- Важно правильно организовать filesystem paths.
+Лучше организовать filesystem paths таким образом, чтобы downloads и media находились в одном filesystem.
 
- Например:
+Например:
 
-```
 /data
 ├── torrents
 │   └── tv
 └── media
     └── tv
-```
 
- Это позволяет использовать hardlinks и избежать ненужного copy+delete при перемещении файлов.
+Это позволяет использовать hardlinks и избегать ненужных copy+delete операций.
 
 ---
 
- # 19\. Home Assistant
+# 19. Home Assistant
 
- Home Assistant лучше разместить отдельно:
+Home Assistant лучше разместить отдельно:
 
-```
 Proxmox
 │
 └── VM
      │
      └── Home Assistant OS
-```
 
- Например:
+Например:
 
-```
-2 vCPU
-2–4 GB RAM
-```
+- 2 vCPU
+- 2–4 GB RAM
 
- Отдельная VM особенно удобна, если позже появятся:
+Отдельная VM особенно удобна для:
 
- - Zigbee USB dongle;
+- Zigbee USB dongle;
 - Z-Wave;
 - Bluetooth;
 - Thread;
-- другие USB devices.
-
- USB passthrough в VM будет проще и понятнее, чем строить это вокруг LXC/Docker.
+- других USB devices.
 
 ---
 
- # 20\. Storage architecture
+# 20. Storage architecture
 
- Не стоит смешивать OS, Docker volumes и media в одном виртуальном диске.
+Не стоит смешивать OS, Docker volumes и media в одном виртуальном диске.
 
- Лучше:
+Лучше:
 
-```
 NVMe
 │
 ├── Proxmox
-│
 ├── VM disks
-│
 └── Application data
-```
 
- А media/documents:
+А media/documents:
 
-```
 OMV
 │
 ├── Movies
 ├── TV
 ├── Documents
 └── Backups
-```
 
- При этом:
+Главный принцип:
 
- > **Database и активные Docker volumes лучше хранить на локальном NVMe.**
-
- Не стоит размещать PostgreSQL на SMB/NFS без конкретной причины.
+> OMV = bulk storage
+> NVMe = application state / database / config
 
 ---
 
- # 21\. Пример storage layout
+# 21. Backup strategy
 
-```
-NVMe
-│
-└── Docker VM
-    │
-    ├── /opt/docker
-    │   ├── nginx-proxy-manager
-    │   ├── paperless
-    │   ├── nextcloud
-    │   └── media
-    │
-    └── databases
-        ├── postgres
-        └── ...
-```
+Snapshot VM сам по себе не является полноценной backup strategy.
 
- OMV:
+Желательно иметь:
 
-```
-OMV
-│
-├── /media
-│   ├── movies
-│   ├── tv
-│   └── music
-│
-├── /documents
-│
-└── /backups
-```
-
----
-
- # 22\. Docker Compose лучше разделить на проекты
-
- Не стоит создавать один огромный Compose:
-
-```
-docker-compose.yml
-500+ lines
-```
-
- Лучше:
-
-```
-/opt/docker/
-│
-├── nginx-proxy-manager/
-│   └── compose.yml
-│
-├── media/
-│   └── compose.yml
-│
-├── paperless/
-│   └── compose.yml
-│
-└── nextcloud/
-    └── compose.yml
-```
-
- Например:
-
-```
-media
-├── sonarr
-├── plex
-└── jellyfin
-```
-
- Отдельно:
-
-```
-paperless
-├── paperless
-├── postgres
-└── valkey
-```
-
- и:
-
-```
-nextcloud
-├── nextcloud
-└── postgres
-```
-
- Так проще:
-
- - обновлять;
-- делать backup;
-- диагностировать;
-- восстанавливать;
-- переносить отдельные приложения.
-
----
-
- # 23\. Распределение RAM
-
- Для 32 GB RAM можно начать примерно так:
-
- | Компонент | RAM |
-| --- | --- |
-| Proxmox | 2–4 GB |
-| Docker VM | 8–16 GB |
-| Home Assistant OS | 2–4 GB |
-| OMV | 4–8 GB |
-| Запас | Остаток |
-
-Например:
-
-```
-32 GB total
-│
-├── Proxmox       ~3 GB
-├── Docker VM     10 GB
-├── Home Assistant 3 GB
-├── OMV            4 GB
-└── Free           12 GB
-```
-
- Затем смотреть на реальное потребление и постепенно увеличивать ресурсы.
-
----
-
- # 24\. Backup strategy
-
- Snapshot VM сам по себе **не является полноценной backup strategy**.
-
- Желательно иметь:
-
-```
 Proxmox
    │
    └── Backups
         ├── Docker VM
         ├── Home Assistant VM
         └── OMV
-```
 
- Дополнительно нужны application-level backups.
+Дополнительно нужны application-level backups.
 
- Например:
+Например:
 
-```
 NPM
 ├── /data
 └── /etc/letsencrypt
-```
 
- Paperless:
-
-```
 Paperless
 ├── documents
 ├── media
 └── PostgreSQL dump
-```
 
- Nextcloud:
-
-```
 Nextcloud
 ├── data
 └── PostgreSQL dump
-```
 
 ---
 
- # 25\. Финальная рекомендуемая схема
+# 22. Итоговая архитектура
 
-```
                          INTERNET
                              │
                        Public IPv4
@@ -897,48 +620,556 @@ Nextcloud
                     │ │ Storage     │ │
                     │ └─────────────┘ │
                     └─────────────────┘
-```
 
 ---
 
- # 26\. Итоговая таблица
+# 23. Финальная таблица
 
- | Компонент | Рекомендация |
-| --- | --- |
+| Компонент | Рекомендация |
+|---|---|
 | Proxmox | Bare metal |
-| Docker Host | **Отдельная Debian VM** |
-| Nginx Proxy Manager | **Docker** |
+| Docker Host | Отдельная Debian VM |
+| Nginx Proxy Manager | Docker |
 | Plex | Docker |
 | Jellyfin | Docker |
 | Sonarr | Docker |
 | Paperless-ngx | Docker Compose |
 | Nextcloud | Docker Compose |
-| Home Assistant | **Отдельная VM + HAOS** |
-| NPM Database | **SQLite** |
-| Paperless Database | **PostgreSQL** |
-| Nextcloud Database | **PostgreSQL** |
+| Home Assistant | Отдельная VM + HAOS |
+| NPM Database | SQLite |
+| Paperless Database | PostgreSQL |
+| Nextcloud Database | PostgreSQL |
 | Media storage | OMV |
-| Application/DB storage | **Local NVMe** |
-| Internet ingress | **NPM :80/:443** |
-| NPM Admin :81 | **Только LAN/VPN** |
+| Application/DB storage | Local NVMe |
+| Internet ingress | NPM :80/:443 |
+| NPM Admin :81 | Только LAN/VPN |
 | Backup | Proxmox Backup + application-level DB/data backups |
 
 ---
 
- ## Главная идея
+# 24. Настройка OMV для Docker Host
+
+## Целевая архитектура
+
+OMV будет выступать как storage server, а Docker VM — как клиент NFS.
+
+                         Proxmox
+                            │
+              ┌─────────────┴─────────────┐
+              │                           │
+        VM: OMV 7.7.24-7             VM: Docker Host
+              │                           │
+        OMV virtual disk              Debian
+              │                           │
+              ▼                           ▼
+          OMV storage               Docker Compose
+              │                           │
+              ├── media                  ├── Plex
+              ├── downloads              ├── Jellyfin
+              ├── documents               ├── Sonarr
+              └── backups                 ├── Paperless
+                     │                    └── Nextcloud
+                     │
+                     └────── NFS ─────────┘
+
+---
+
+# 25. Почему NFS
+
+Для Linux → Linux лучше использовать NFS:
+
+OMV ──NFS──> Debian Docker VM
+
+а не SMB.
+
+SMB имеет больше смысла для Windows clients.
+
+Для Linux Docker Host + Linux OMV:
+
+> NFS — естественный вариант.
+
+---
+
+# 26. Организация storage в OMV
+
+В OMV:
+
+Storage
+└── File Systems
+
+Убедиться, что filesystem смонтирован.
+
+Например:
+
+/dev/sdb1
+    ↓
+/srv/dev-disk-by-uuid-XXXX/
+
+Не следует вручную редактировать `/etc/fstab` OMV.
+
+Для storage management лучше использовать интерфейс OMV.
+
+---
+
+# 27. Shared Folders
+
+В OMV:
+
+Storage → Shared Folders
+
+Можно создать:
+
+- media
+- downloads
+- documents
+- backups
+
+Логическая структура:
+
+OMV filesystem
+│
+├── media
+│   ├── movies
+│   ├── tv
+│   └── music
+│
+├── downloads
+│   ├── torrents
+│   └── usenet
+│
+├── documents
+│
+└── backups
+
+Не нужно создавать отдельный Shared Folder для каждого Docker container.
+
+---
+
+# 28. NFS
+
+В OMV:
+
+Services → NFS → Settings
+
+Включить NFS.
+
+Затем:
+
+Services → NFS → Shares
+
+Создать NFS shares.
+
+Например:
+
+Shared folder:
+    media
+
+Client:
+    192.168.1.20/32
+
+где `192.168.1.20` — IP Docker VM.
+
+Не стоит разрешать:
+
+Client:
+    *
+
+или:
+
+0.0.0.0/0
+
+Если storage нужен только Docker VM, доступ должен быть ограничен её IP.
+
+Например:
+
+OMV:        192.168.1.10
+Docker VM:  192.168.1.20
+
+---
+
+# 29. NFS shares
+
+Можно экспортировать:
+
+192.168.1.10:/export/media
+192.168.1.10:/export/downloads
+192.168.1.10:/export/documents
+192.168.1.10:/export/backups
+
+Но не нужно делать отдельный NFS share для каждого приложения.
+
+Не стоит создавать:
+
+- npm-data
+- sonarr-data
+- plex-data
+- jellyfin-data
+- paperless-data
+- nextcloud-data
+
+Это быстро усложнит storage management.
+
+---
+
+# 30. Docker VM: NFS client
+
+На Debian Docker VM:
+
+```bash
+sudo apt update
+sudo apt install nfs-common
+````
+
+ Проверить exports:
 
 ```
-Proxmox
-   │
-   ├── VM → Home Assistant OS
-   │
-   ├── VM → Debian → Docker → Applications
-   │
-   └── OMV → Storage
+showmount -e 192.168.1.10
 ```
 
- То есть:
+ Ожидаемый результат:
 
- > **Proxmox отвечает за инфраструктурную изоляцию, VM — за изоляцию Docker Host, Docker — за изоляцию приложений, а Docker Compose — за lifecycle приложений.**
+```
+Export list for 192.168.1.10:
 
- Для вашего Home Lab это хороший баланс между **простотой, безопасностью, эффективным использованием ресурсов и учебной ценностью**.
+/export/media       192.168.1.20
+/export/downloads   192.168.1.20
+/export/documents   192.168.1.20
+/export/backups     192.168.1.20
+```
+
+---
+
+ # 31\. Mount points на Docker VM
+
+ Создать:
+
+```
+sudo mkdir -p /mnt/omv/media
+sudo mkdir -p /mnt/omv/downloads
+sudo mkdir -p /mnt/omv/documents
+sudo mkdir -p /mnt/omv/backups
+```
+
+ Проверить вручную:
+
+```
+sudo mount -t nfs 192.168.1.10:/export/media /mnt/omv/media
+```
+
+ Проверить:
+
+```
+mount | grep omv
+```
+
+ и:
+
+```
+df -h
+```
+
+---
+
+ # 32\. Проверка записи
+
+```
+sudo touch /mnt/omv/media/test.txt
+ls -l /mnt/omv/media/
+```
+
+ На OMV проверить наличие файла.
+
+ Если файл появился — NFS работает.
+
+---
+
+ # 33\. Постоянный mount через fstab
+
+ После успешной проверки добавить на Docker VM:
+
+```
+192.168.1.10:/export/media       /mnt/omv/media       nfs4  defaults,_netdev  0  0
+192.168.1.10:/export/downloads   /mnt/omv/downloads   nfs4  defaults,_netdev  0  0
+192.168.1.10:/export/documents   /mnt/omv/documents   nfs4  defaults,_netdev  0  0
+192.168.1.10:/export/backups     /mnt/omv/backups     nfs4  defaults,_netdev  0  0
+```
+
+ Затем:
+
+```
+sudo mount -a
+```
+
+ Проверить:
+
+```
+findmnt /mnt/omv/media
+```
+
+ `_netdev` важен, поскольку система понимает, что это network filesystem.
+
+---
+
+ # 34\. Docker и NFS
+
+ Docker не должен напрямую знать об OMV.
+
+ Docker VM видит:
+
+ /mnt/omv/media\
+ /mnt/omv/downloads\
+ /mnt/omv/documents
+
+ как обычные Linux directories.
+
+ Docker container получает bind mount:
+
+```
+services:
+  jellyfin:
+    image: jellyfin/jellyfin
+    volumes:
+      - /opt/docker/jellyfin/config:/config
+      - /mnt/omv/media:/media
+```
+
+ Получается:
+
+ Jellyfin container\
+ │\
+ │ /media\
+ ▼\
+ Docker VM\
+ │\
+ │ /mnt/omv/media\
+ ▼\
+ NFS\
+ │\
+ ▼\
+ OMV\
+ │\
+ ▼\
+ Physical disk
+
+---
+
+ # 35\. Sonarr
+
+ Например:
+
+```
+services:
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    volumes:
+      - /opt/docker/sonarr/config:/config
+      - /mnt/omv/media:/media
+      - /mnt/omv/downloads:/downloads
+```
+
+ Внутри контейнера:
+
+ /media\
+ /downloads
+
+---
+
+ # 36\. Plex
+
+```
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    volumes:
+      - /opt/docker/plex/config:/config
+      - /mnt/omv/media:/media
+```
+
+ Plex получает:
+
+ /media/movies\
+ /media/tv\
+ /media/music
+
+---
+
+ # 37\. Важный принцип: `/config` на NVMe
+
+ Не следует выносить абсолютно все Docker volumes на OMV.
+
+ Лучше:
+
+ /config → local NVMe\
+ /media → OMV
+
+ Например:
+
+ Docker VM\
+ │\
+ ├── /opt/docker/\
+ │ ├── plex/config ← NVMe\
+ │ ├── jellyfin/config ← NVMe\
+ │ ├── sonarr/config ← NVMe\
+ │ └── npm/data ← NVMe\
+ │\
+ └── /mnt/omv/\
+ ├── media ← NFS\
+ ├── downloads ← NFS\
+ ├── documents ← NFS\
+ └── backups ← NFS
+
+---
+
+ # 38\. Почему configuration лучше держать на NVMe
+
+ Application configuration может содержать:
+
+ - SQLite databases;
+- metadata;
+- cache;
+- thumbnails;
+- indexes;
+- logs;
+- frequent small writes.
+
+ Поэтому:
+
+ Jellyfin\
+ /config → NVMe\
+ /media → OMV
+
+ лучше, чем:
+
+ Jellyfin\
+ /config → NFS\
+ /media → NFS
+
+---
+
+ # 39\. Sonarr и hardlinks
+
+ Для media stack лучше сделать единый filesystem:
+
+ OMV\
+ │\
+ └── data\
+ ├── torrents\
+ │ ├── movies\
+ │ └── tv\
+ │\
+ ├── usenet\
+ │ ├── movies\
+ │ └── tv\
+ │\
+ └── media\
+ ├── movies\
+ ├── tv\
+ └── music
+
+ На Docker VM:
+
+ /mnt/omv/data
+
+ Sonarr получает:
+
+ /data
+
+ Тогда:
+
+ /data/torrents/tv/Show.S01E01.mkv\
+ │\
+ │ hardlink\
+ ▼\
+ /data/media/tv/Show/Season 01/Show.S01E01.mkv
+
+ Оба пути находятся в одном filesystem.
+
+---
+
+ # 40\. Paperless-ngx
+
+ Для Paperless:
+
+ Paperless\
+ │\
+ ├── application/config → NVMe\
+ ├── PostgreSQL → NVMe\
+ ├── Redis/Valkey → NVMe\
+ │\
+ └── documents → OMV
+
+ Например:
+
+```
+volumes:
+  - /opt/docker/paperless/data:/usr/src/paperless/data
+  - /opt/docker/paperless/media:/usr/src/paperless/media
+  - /mnt/omv/documents:/usr/src/paperless/export
+```
+
+ Конкретные paths следует согласовать с используемым Compose deployment Paperless.
+
+---
+
+ # 41\. Nextcloud
+
+ Для Nextcloud:
+
+ Nextcloud\
+ │\
+ ├── application/config → NVMe\
+ ├── PostgreSQL → NVMe\
+ │\
+ └── user data → OMV
+
+ Но Nextcloud data directory на NFS требует аккуратной настройки:
+
+ - permissions;
+- locking;
+- network filesystem behaviour;
+- performance.
+
+ Поэтому разумнее сначала поднять Nextcloud полностью на NVMe, убедиться в стабильности, а затем переносить user data на OMV.
+
+---
+
+ # 42\. Nginx Proxy Manager
+
+ NPM полностью оставить на NVMe:
+
+ NPM\
+ │\
+ ├── /data → NVMe\
+ └── /etc/letsencrypt → NVMe
+
+ Для NPM нет практической необходимости использовать NFS.
+
+---
+
+ # 43\. Финальная storage architecture
+
+```
+             ┌───────────────────────┐
+             │        Proxmox        │
+             └───────────┬───────────┘
+                         │
+          ┌──────────────┴──────────────┐
+          │                             │
+          ▼                             ▼
+    ┌───────────┐                 ┌──────────────┐
+    │    OMV    │                 │ Docker VM    │
+    │           │                 │              │
+    │ HDD/SSD   │◄───── NFS ─────►│ Debian       │
+    │           │                 │ Docker       │
+    └───────────┘                 └──────┬───────┘
+                                         │
+                      ┌──────────────────┼──────────────────┐
+                      │                  │                  │
+                      ▼                  ▼                  ▼
+                   NPM/Plex           Sonarr            Jellyfin
+                   /config            /config            /config
+                      │                  │                  │
+                      └──────── NVMe ────┘                  │
+                                         │                  │
+                                         └──── NFS ─────────┘
+  
